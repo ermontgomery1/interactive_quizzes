@@ -1,0 +1,77 @@
+Forwarding table	Table used in destination-based forwarding that specifies a router's local data-plane forwarding behavior based on destination IP addresses.
+Per-router control	Control plane approach where a routing algorithm runs in every router and routing components interact with each other to compute forwarding tables.
+Logically centralized control	Control plane approach where a distinct remote controller computes and distributes forwarding or flow tables to local control agents in routers.
+Routing algorithm	Algorithm whose goal is to determine good, typically least-cost paths or routes from senders to receivers through a network of routers.
+Network graph	Abstract model G=(N, E) where nodes N represent routers and edges E represent physical links with assigned costs.
+Least-cost path	Path between a source and destination node whose sum of edge costs is the minimum among all possible paths.
+Shortest path	Path with the smallest number of links between source and destination, equivalent to the least-cost path when all edges have equal cost.
+Centralized routing algorithm	Algorithm that computes least-cost paths using complete, global knowledge about network connectivity and all link costs.
+Decentralized routing algorithm	Algorithm where least-cost paths are calculated iteratively and distributedly by routers exchanging information only with directly attached neighbors.
+Link-state (LS) algorithm	Centralized routing algorithm where nodes broadcast link-state packets so every node has a complete network map to compute least-cost paths.
+Dijkstra's algorithm	Iterative link-state algorithm that computes the least-cost path from one source node to all other nodes in the network with O(n^2) worst-case complexity.
+Distance-vector (DV) algorithm	Iterative, asynchronous, and distributed routing algorithm where each node maintains and exchanges a vector of cost estimates to all other nodes.
+Bellman-Ford equation	Equation d_x(y) = min_v {c(x,v) + d_v(y)} expressing the least-cost path from node x to y via neighbor v.
+Distance vector	Vector D_x maintained by node x containing its current estimates of the least-cost paths to all destination nodes in the network.
+Routing loop	Pathology where two or more routers forward packets to each other in a cycle for a given destination, trapping packets like a black hole.
+Count-to-infinity problem	Slow propagation of bad news (increased link costs) in distance-vector routing, causing routing loops that persist for many iterations.
+Autonomous system (AS)	Group of routers under the same administrative control, identified by a globally unique Autonomous System Number (ASN).
+Intra-AS routing protocol	Routing protocol that determines routing paths among routers located within the same autonomous system.
+Open Shortest Path First (OSPF)	A publicly specified link-state intra-AS routing protocol that floods link-state advertisements and runs Dijkstra's algorithm.
+Inter-AS routing protocol	Routing protocol that coordinates route determination across multiple autonomous systems.
+BGP	Border Gateway Protocol, the decentralized, asynchronous inter-AS routing protocol that glues Internet ISPs together using CIDRized prefixes.
+CIDRized prefix	Subnet or collection of subnets represented in CIDR notation (such as 138.16.68/22) to which BGP routes packets.
+Gateway router	Router on the edge of an autonomous system that directly connects to one or more routers in other autonomous systems.
+Internal router	Router that connects only to hosts and other routers within its own autonomous system.
+BGP connection	Semi-permanent TCP connection over port 179 used by pairs of routers to exchange BGP routing messages.
+eBGP connection	External BGP session spanning two routers in different autonomous systems.
+iBGP connection	Internal BGP session between two routers located within the same autonomous system.
+BGP route	Advertised CIDRized destination prefix paired with its associated BGP attributes, such as AS-PATH and NEXT-HOP.
+AS-PATH attribute	BGP route attribute listing the sequence of autonomous systems through which an advertisement has passed, used for route selection and loop prevention.
+NEXT-HOP attribute	BGP route attribute specifying the IP address of the router interface that begins the AS-PATH, linking inter-AS and intra-AS routing.
+Local preference attribute	Policy-driven BGP route attribute set by an AS administrator that serves as the first elimination criterion in BGP route selection.
+BGP route-selection algorithm	Sequential elimination rules picking routes by highest local preference, shortest AS-PATH, closest NEXT-HOP (hot potato), and BGP identifiers.
+Multi-homed access ISP	Access ISP connected to the rest of the Internet through two or more different provider networks while acting only as a source or sink of traffic.
+SDN architecture	Software-defined networking model characterized by flow-based forwarding, separation of data and control planes, external control software, and programmability.
+SDN controller	Logically centralized network operating system that maintains network-wide state and mediates between switches and network-control applications.
+Link-layer node	Any device that runs a link-layer (layer-2) protocol, including hosts, routers, switches, and WiFi access points.
+Link-layer link	Communication channel that connects adjacent nodes along an end-to-end communication path.
+Link-layer frame	Link-layer protocol data unit consisting of header fields and a data field that encapsulates a network-layer datagram for transmission over a single link.
+Framing	Link-layer service that encapsulates each network-layer datagram within a link-layer frame before transmission over a link.
+Medium access control	MAC protocol specifying the rules by which a frame is transmitted onto a link, especially to coordinate access on shared broadcast channels.
+Network adapter (NIC)	Hardware interface card or motherboard chip containing the link-layer controller that implements framing, link access, and error detection.
+Link-layer controller	Special-purpose hardware chip at the heart of a network adapter that implements core link-layer services.
+Error-detection bits	Extra bits (EDC) appended to data by a sending node to allow the receiving node to detect and sometimes correct in-transit bit flips.
+Single parity bit	Simple error-detection scheme adding one bit so the total number of 1s is even or odd, detecting any odd number of bit errors.
+Two-dimensional parity	Parity scheme arranging bits into rows and columns with parity bits for each, enabling detection and correction of any single-bit error.
+Cyclic redundancy check	CRC, a polynomial-code error-detection technique using modulo-2 division by an agreed generator bit pattern G, widely implemented in link-layer hardware.
+CRC generator	Agreed (r+1)-bit pattern G with a leftmost 1 bit used by sender and receiver in modulo-2 division to compute and verify CRC bits.
+Broadcast link	Shared communication channel where multiple sending and receiving nodes are connected and any transmitted frame is received by all other nodes.
+Multiple access problem	Challenge of coordinating transmissions of multiple sending and receiving nodes sharing a single broadcast channel to prevent collisions.
+Frame collision	Event occurring when two or more nodes transmit simultaneously on a broadcast channel, tangling their signals so all colliding frames are lost.
+Channel partitioning protocol	Multiple access protocol class (such as TDM, FDM, and CDMA) that divides channel bandwidth into dedicated time slots, frequencies, or codes.
+Time-division multiplexing	TDM, a channel partitioning technique that divides time into frames and slots, assigning each node a dedicated time slot to transmit without collisions.
+Frequency-division multiplexing	FDM, a channel partitioning technique that divides a channel's bandwidth into smaller frequency bands and assigns one to each node.
+Random access protocol	Multiple access protocol class (such as ALOHA and CSMA) where nodes transmit at full channel rate and wait random delays after collisions.
+Slotted ALOHA	Synchronized random access protocol where nodes transmit fixed-size frames only at slot beginnings, achieving a maximum efficiency of 1/e (0.37).
+Pure ALOHA	Unslotted, decentralized random access protocol where nodes transmit frames immediately upon arrival, achieving a maximum efficiency of 1/(2e) (0.18).
+Carrier sensing	CSMA rule ("listen before speaking") where a node listens to the channel and waits until it is idle before transmitting.
+Collision detection	CSMA/CD rule ("stop talking if interrupted") where a transmitting node listens while sending and immediately aborts upon detecting a collision.
+Propagation delay	Time required for a signal to travel from one node to another across a physical medium, which causes collisions even with carrier sensing.
+Binary exponential backoff	Algorithm used in Ethernet and DOCSIS that randomly selects a wait interval from {0, 1, ..., 2^n - 1} growing exponentially with collision count n.
+Taking-turns protocol	Multiple access protocol class (such as polling and token passing) designed to give active nodes high throughput while fairly sharing bandwidth.
+Polling protocol	Taking-turns protocol where a master node polls each node in a round-robin cycle, granting permission to transmit frames.
+Token-passing protocol	Decentralized taking-turns protocol where a small control frame called a token circulates among nodes in a fixed order to grant transmission rights.
+MAC address	Unique 6-byte (48-bit) flat physical address assigned to a network adapter and managed by the IEEE, typically written in hexadecimal notation.
+MAC broadcast address	Special 48-bit address of all 1s (FF-FF-FF-FF-FF-FF) used to deliver a link-layer frame to all adapters on a LAN.
+Address Resolution Protocol (ARP)	A plug-and-play protocol that translates network-layer IP addresses into link-layer MAC addresses for nodes on the same subnet.
+ARP table	Memory table in each host and router storing IP-to-MAC address mappings along with a time-to-live (TTL) expiration value (typically 20 minutes).
+ARP query packet	Broadcast ARP packet sent to FF-FF-FF-FF-FF-FF asking all nodes on a subnet for the MAC address matching a target IP address.
+Ethernet frame	Link-layer frame format containing preamble, destination MAC, source MAC, type, data (46-1,500 bytes), and CRC fields.
+Link-layer switch	Transparent, plug-and-play layer-2 store-and-forward device that filters and forwards Ethernet frames based on destination MAC addresses.
+Switch filtering	Switch function that determines whether an incoming frame should be dropped because its destination resides on the same interface it arrived on.
+Switch forwarding	Switch function that determines the outgoing interface leading toward a frame's destination MAC address and moves the frame to that interface's buffer.
+Switch self-learning	Autonomous process where a switch populates its switch table by recording the source MAC address, arrival interface, and timestamp of incoming frames.
+Switch aging time	Period of time after which a switch deletes a MAC address entry from its switch table if no frames arrive from that source address.
+Virtual LAN (VLAN)	Switch feature allowing multiple isolated virtual local area networks (broadcast domains) to be defined over a single physical switch infrastructure.
+VLAN trunking	Scalable method of interconnecting VLAN switches using a special trunk port that carries traffic for all VLANs.
+IEEE 802.1Q	Extended Ethernet frame format for VLAN trunks that inserts a 4-byte VLAN tag (including a 12-bit VLAN ID) into the frame header.

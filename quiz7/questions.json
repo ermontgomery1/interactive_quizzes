@@ -1,0 +1,194 @@
+[
+  {
+    "id": 1,
+    "type": "multiple_choice",
+    "question": "A router delivers a datagram to 10.4.2.70. Its west interface serves 10.4.1.0/24 and its east interface serves 10.4.2.0/24. West's ARP table has an entry for 10.4.1.70. East's table is empty. Which operation supplies the Ethernet destination for this datagram?",
+    "images": [
+      "arp_router_east_west.jpg"
+    ],
+    "figure": "A router connects a west LAN (10.4.1.0/24) and an east LAN (10.4.2.0/24). Each interface has its own ARP table (West ARP table, East ARP table). A computer with address 10.4.2.70 sits on the east LAN; another computer sits on the west LAN.",
+    "options": {
+      "A": "Use the west entry because both addresses have host number 70.",
+      "B": "Broadcast an ARP request for 10.4.2.70 on east.",
+      "C": "Broadcast the same ARP request on both interfaces and use the first reply.",
+      "D": "Broadcast an ARP request for the router's own east-interface address on east."
+    },
+    "answer": "B",
+    "explanation": "The forwarding table says 10.4.2.70 is in 10.4.2.0/24, which is reached through the east interface. ARP only resolves addresses on the interface's own subnet, and each interface keeps its own ARP table, so the router broadcasts an ARP request for 10.4.2.70 on the east LAN. The west entry belongs to a different host on a different subnet (A is wrong). Sending the request on the west LAN makes no sense because the host isn't there (C is wrong). The router already knows its own MAC address (D is wrong).",
+    "hint": "Which subnet holds 10.4.2.70, and which interface's LAN does ARP need to search?"
+  },
+  {
+    "id": 2,
+    "type": "matching",
+    "question": "Network- and Link-layer addressing: an end-to-end scenario (1b). Consider the network shown below. The IP and MAC addresses are shown for hosts A, B, C and D, as well as for the router's interfaces. Consider an IP datagram being sent from node B to node D. Match the source/destination network- or link-layer address at the location (4) by choosing a value from the pulldown list.",
+    "images": [
+      "addressing_end_to_end.jpg"
+    ],
+    "figure": "One router with three interfaces joins three subnets. Left subnet: host A (77-34-F1-EF-14-72, 128.119.97.18); router interface CC-A5-81-0B-AE-33, 128.119.97.194; points (1) and (2). Top subnet: host B (68-01-BC-58-AF-24, 128.119.50.107); router interface 49-FA-B0-3C-E2-7C, 128.119.50.60; point (3). Right subnet: router interface 72-9E-4A-31-9C-42, 128.119.240.15; host C (4C-9D-AA-74-D6-1F, 128.119.240.52); host D (D5-A0-EE-9A-73-D5, 128.119.240.116). Point (4) is on the link between the router's right interface and the right subnet's switch; points (5) and (6) are next to D and C.",
+    "prompts": [
+      "What is the source MAC address on the frame at point (4)?",
+      "What is the destination MAC address on the frame at point (4)?",
+      "What is the source IP address of the datagram at point (4)?",
+      "What is the destination IP address of the datagram at point (4)?"
+    ],
+    "choices": [
+      "77-34-F1-EF-14-72",
+      "CC-A5-81-0B-AE-33",
+      "68-01-BC-58-AF-24",
+      "49-FA-B0-3C-E2-7C",
+      "72-9E-4A-31-9C-42",
+      "4C-9D-AA-74-D6-1F",
+      "D5-A0-EE-9A-73-D5",
+      "128.119.97.18",
+      "128.119.97.194",
+      "128.119.50.107",
+      "128.119.50.60",
+      "128.119.240.15",
+      "128.119.240.52",
+      "128.119.240.116"
+    ],
+    "answer": [
+      "72-9E-4A-31-9C-42",
+      "D5-A0-EE-9A-73-D5",
+      "128.119.50.107",
+      "128.119.240.116"
+    ],
+    "explanation": "Point (4) is on the subnet between the router's right interface and D. The router builds a new frame for this hop: the source MAC is the router's outgoing interface (72-9E-4A-31-9C-42) and the destination MAC is D's adapter (D5-A0-EE-9A-73-D5). The IP datagram itself is unchanged end to end, so the source IP is still B (128.119.50.107) and the destination IP is still D (128.119.240.116).",
+    "hint": "MAC addresses change at every hop (they name the two ends of the current link); IP addresses stay the same from source to destination."
+  },
+  {
+    "id": 3,
+    "type": "multiple_choice",
+    "question": "Which of the following statements are true about a self learning switch? Select all that apply.",
+    "options": {
+      "A": "A self-learning switch never forgets a self-learned association of a MAC address x and switch port y.",
+      "B": "A self learning switch associates the source MAC address on an incoming frame with the port on which it arrived, and stores this matching in a table. The switch has now learned the port that leads to that MAC address.",
+      "C": "A self-learning switch will age-out (forget) a self-learned association of a MAC address x and switch port y if it doesn't see a frame with MAC address x incoming on switch port y after some amount of time.",
+      "D": "A self-learning switch frees a network manager from a least one configuration task that might be associated with managing a switch"
+    },
+    "answer": [
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation": "A switch learns by recording (source MAC, incoming port, time) for every frame it receives (B). Entries expire after a TTL if no frame from that MAC arrives on that port, so the table can follow hosts that move or disappear (C true, A false). Because the table builds itself, an administrator does not have to configure it by hand: switches are plug-and-play (D).",
+    "hint": "How does the switch fill its table, and what happens to old entries?"
+  },
+  {
+    "id": 4,
+    "type": "multiple_choice",
+    "question": "A laptop knows a printer's IPv4 address. Both are on one Ethernet LAN, and the laptop has no ARP entry for the printer. Which pair of Ethernet destinations would you expect in the request and the normal reply?",
+    "options": {
+      "A": "The printer's MAC, then the laptop's MAC, because both IP addresses are known.",
+      "B": "The broadcast MAC for both frames, so every ARP cache receives the answer.",
+      "C": "The broadcast MAC, then the laptop's MAC, which the printer learned from the request.",
+      "D": "The gateway's MAC, then the printer's MAC, because the gateway resolves local addresses."
+    },
+    "answer": "C",
+    "explanation": "The laptop doesn't know the printer's MAC yet, so the ARP query goes to the broadcast address FF-FF-FF-FF-FF-FF and every adapter on the LAN receives it. The request carries the laptop's IP and MAC, so the printer can send the reply as a unicast frame straight to the laptop's MAC. The gateway is not involved because both devices are on the same subnet.",
+    "hint": "The query has to reach someone whose MAC is unknown; the reply goes to someone whose MAC was just learned."
+  },
+  {
+    "id": 5,
+    "type": "multiple_choice",
+    "question": "Consider the simple star-connected Ethernet LAN shown below, and suppose the Ethernet switch is a learning switch, and that the switch table is initially empty. Suppose C sends an Ethernet frame addressed to C' and C' replies back to C. How many of these two frames are also received at B's interface?",
+    "images": [
+      "star_switch_lan.jpg"
+    ],
+    "figure": "Six hosts attached to one switch: A on port 1, B on port 2, C on port 3, A' on port 4, B' on port 5, C' on port 6.",
+    "options": {
+      "A": "0",
+      "B": "1",
+      "C": "2",
+      "D": "4"
+    },
+    "answer": "B",
+    "explanation": "When C sends to C', the switch learns that C is on port 3. It has no entry for C', so it floods the frame out every other port, and B receives it. When C' replies, the switch learns C' is on port 6 and already knows C is on port 3, so it forwards the reply only to port 3. B receives just the first frame.",
+    "hint": "The switch floods frames to unknown destinations. After the first frame, what does the table know?"
+  },
+  {
+    "id": 6,
+    "type": "multiple_choice",
+    "question": "An ARP query packet is encapsulated in",
+    "options": {
+      "A": "an IP datagram",
+      "B": "a link-layer broadcast frame",
+      "C": "a link-layer frame addressed to a specific adapter",
+      "D": "none of the above"
+    },
+    "answer": "B",
+    "explanation": "ARP runs directly over the link layer, not inside IP. Since the sender does not know the target's MAC address yet, the query is placed in a frame sent to the broadcast MAC address FF-FF-FF-FF-FF-FF so every adapter on the LAN receives it. (The ARP reply is the one sent in a frame addressed to a specific adapter.)",
+    "hint": "The sender doesn't know who to address the query to. Is ARP carried inside IP?"
+  },
+  {
+    "id": 7,
+    "type": "matching",
+    "question": "Switches S1, S2 and S3 form a chain. H attaches to S1 and T to S3, both on VLAN 30 in one IPv4 subnet. The S1–S2 trunk carries VLANs 20 and 30. The S2–S3 trunk allows only VLAN 20 at both ends. All learning tables start empty. H sends one ARP request for T. The administrator then enables VLAN 30 on both ends of S2–S3. H retries and T replies. No other frames arrive.\n\nMatch each observation to the set of switches. A letter may be used more than once.",
+    "images": [
+      "vlan_switch_chain.jpg"
+    ],
+    "figure": "Three switches in a chain. S1: VLAN 20 on ports 1-8, VLAN 30 on ports 9-15 (H attached to port 9), trunk port 16 to S2. S2: trunk port 1 to S1, VLAN 20 on ports 2,3,5, VLAN 30 on ports 4,6,7, trunk port 8 to S3. S3: trunk port 1 to S2, VLAN 20 on ports 2,3,5, VLAN 30 on ports 4,6,7,8 (T attached to port 6).",
+    "prompts": [
+      "Learned H's MAC during the first request",
+      "Had no entry for H immediately after the first request",
+      "Has entries for both H and T after the successful reply"
+    ],
+    "choices": [
+      "A = S1, S2 and S3",
+      "B = S1 and S2 only",
+      "C = S3 only",
+      "D = S1 only"
+    ],
+    "answer": [
+      "B = S1 and S2 only",
+      "C = S3 only",
+      "A = S1, S2 and S3"
+    ],
+    "explanation": "First request: H's broadcast is tagged VLAN 30. S1 learns H and floods it over the S1–S2 trunk, which carries VLAN 30, so S2 also learns H. The S2–S3 trunk does not allow VLAN 30, so the frame never reaches S3. So S1 and S2 learned H (B), and S3 has no entry for H (C). After VLAN 30 is enabled on S2–S3, H's retry reaches all three switches, so each learns H. T's reply travels back S3 → S2 → S1, and each switch learns T. All three switches now have entries for both H and T (A).",
+    "hint": "A trunk only carries frames for the VLANs it allows. Follow H's broadcast along the chain and see where it stops."
+  },
+  {
+    "id": 8,
+    "type": "multiple_choice",
+    "question": "True or False: Traffic between hosts belonging to two different VLANs over a single switch can reach each other without a router.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "A VLAN-capable switch treats each VLAN as a separate broadcast domain and only forwards frames between ports in the same VLAN. To get traffic from one VLAN to another, it has to be routed at the network layer (by a router, or a switch with a built-in router).",
+    "hint": "VLANs split one physical switch into separate virtual LANs. What connects separate LANs?"
+  },
+  {
+    "id": 9,
+    "type": "multiple_choice",
+    "question": "True or False: The destination MAC address in the frame header keeps the same when the frame is being forwarded by multiple routers.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "Each router strips off the incoming link-layer frame and builds a new frame for the next link. The destination MAC is set to the next-hop router's (or final host's) adapter, so it changes at each router. Only the IP source and destination addresses stay the same end to end.",
+    "hint": "MAC addresses only have meaning on one link. What happens to the frame at each router?"
+  },
+  {
+    "id": 10,
+    "type": "multiple_choice",
+    "question": "Which of the following statements are true about MAC (link-layer) addresses? Select one or more statements below.",
+    "options": {
+      "A": "Has 48 bits.",
+      "B": "Has 32 bits.",
+      "C": "Is contained in a SIM card and used when a device identifies itself and connects to an LTE network.",
+      "D": "Generally stays unchanged as a device moves from one network to another.",
+      "E": "A portion of the address bits are associated with the network to which the device is attached, and so changes as the device moves from one network to another.",
+      "F": "Generally does not change, and is associated with a device when it is manufactured/created."
+    },
+    "answer": [
+      "A",
+      "D",
+      "F"
+    ],
+    "explanation": "A MAC address is 48 bits (A true; 32 bits is IPv4, so B is false). It is burned into the adapter when it is manufactured and does not depend on where the device is attached, so it stays the same when the device moves (D and F true). Having a network portion that changes with location describes an IP address (E false). The identifier stored on a SIM card for LTE is the IMSI, not a MAC address (C false).",
+    "hint": "Compare MAC addresses with IP addresses: which one is flat and fixed, and which is hierarchical and location-dependent?"
+  }
+]

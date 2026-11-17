@@ -1,0 +1,230 @@
+[
+  {
+    "id": 1,
+    "type": "multiple_choice",
+    "question": "Consider the following multiple access protocols that we've studied: (1) TDMA and FDMA, (2) CSMA, (3) Aloha, and (4) polling. For which of these protocols is there a maximum amount of time that a node knows that it will have to wait until it can successfully gain access to the channel? Select all that apply.",
+    "options": {
+      "A": "Polling",
+      "B": "TDMA and FDMA",
+      "C": "CSMA and CSMA/CD",
+      "D": "Aloha"
+    },
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "Channel partitioning (TDMA/FDMA) gives each node a dedicated slot or frequency, so a node waits at most one frame before its turn. Polling (and other taking-turns protocols) visits every node in a fixed cycle, so the wait is bounded by one full polling round. Random access protocols (Aloha, CSMA, CSMA/CD) can suffer repeated collisions and random backoffs, so there is no guaranteed upper bound on access time.",
+    "hint": "Which protocols are deterministic (fixed slots or fixed turn order) rather than random?"
+  },
+  {
+    "id": 2,
+    "type": "multiple_choice",
+    "question": "Which of the following statements is true about polling and token-passing protocols? Select all that apply.",
+    "options": {
+      "A": "These protocols can achieve close to 100% channel utilization, in the case that all nodes always have frames to send (the fact that the utilization is close to, but not exactly, 100% is due to a small amount of medium access overhead but not due to collisions).",
+      "B": "There can be times when the channel is idle for more than a short period of time, when a node has a frame to send, but is prevented from doing so by the medium access protocol.",
+      "C": "There can be simultaneous transmissions resulting in collisions.",
+      "D": "These protocols can achieve close to 100% utilization, in the case that there is only one node that always has frames to send (the fact that the utilization is close to, but not exactly, 100% is due to a small amount of medium access overhead but not due to collisions)."
+    },
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Taking-turns protocols give the channel to exactly one node at a time, so there are never collisions (C is false). Nodes with nothing to send pass the token or reply to the poll immediately, so the channel is only idle for the brief polling/token overhead (B is false). Whether all nodes or just one node are busy, the channel is almost always carrying data, with only the small poll/token overhead keeping utilization slightly below 100% (A and D are true).",
+    "hint": "Can two nodes ever hold the right to transmit at the same time? How long does an idle node hold up the channel?"
+  },
+  {
+    "id": 3,
+    "type": "multiple_choice",
+    "question": "True or False: CRC error detection with r CRC bits, as used in Ethernet, is always able to detect as many bits of burst errors in a frame as possible.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "An r-bit CRC is guaranteed to detect all burst errors of r or fewer bits (fewer than r+1). Longer bursts are detected only with high probability (a burst longer than r bits goes undetected with probability about $1/2^r$), so detection is not guaranteed for bursts of arbitrary length.",
+    "hint": "CRC guarantees detection of bursts up to a length tied to r. What happens beyond that?"
+  },
+  {
+    "id": 4,
+    "type": "short_answer",
+    "question": "Exactly one data bit flipped in this received block. Each full row and column uses even parity. The rightmost column and bottom row contain the parity bits.\n\n        C1  C2  C3  C4 | Row parity\nR1       1   0   1   1 | 1\nR2       0   1   1   1 | 0\nR3       1   1   0   0 | 0\nColumn   0   0   0   1 | 1\nparity\n\nThe bit that flipped is at (row, column) ____ ; Corrected four-bit data row should be ____.",
+    "answer": "The flipped bit is at (2, 4); the corrected row R2 is 0110.",
+    "keywords": [
+      "(2,4)",
+      "(2, 4)",
+      "R2C4",
+      "R2,C4",
+      "R2 C4",
+      "0110",
+      "0 1 1 0",
+      "0,1,1,0"
+    ],
+    "explanation": "Check each row: R1 has $1+0+1+1+1 = 4$ ones (even, OK); R2 has $0+1+1+1+0 = 3$ (odd, error); R3 has $1+1+0+0+0 = 2$ (OK). Check each column: C1 $1+0+1+0=2$, C2 $0+1+1+0=2$, C3 $1+1+0+0=2$ (all OK); C4 $1+1+0+1=3$ (odd, error). The failing row and column intersect at (R2, C4), so that bit flipped from 0 to 1. Flipping it back, the corrected R2 data is 0 1 1 0.",
+    "hint": "Find the single row and the single column whose parity check fails; the error is at their intersection."
+  },
+  {
+    "id": 5,
+    "type": "multiple_choice",
+    "question": "True or False: ALOHA coordinates multiple sending and receiving nodes when they access a shared broadcast channel.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "A",
+    "explanation": "ALOHA is a multiple access (MAC) protocol, and the role of any multiple access protocol is to coordinate the transmissions of many sending and receiving nodes on a shared broadcast channel. ALOHA does this in a simple, random-access way (transmit, and on collision retransmit with some probability) rather than through explicit scheduling, but it is still a coordination protocol.",
+    "hint": "What is the general job of every multiple access protocol, including random access ones?"
+  },
+  {
+    "id": 6,
+    "type": "short_answer",
+    "question": "In a CSMA/CD network, the frame transmission time must be at least the worst-case round-trip propagation time. The maximum one-way propagation delay is 12 µs. Use decimal Mbps and ignore overhead.\n\nMinimum frame size at 20 Mbps is ____ bits.\nAt 40 Mbps with 512-bit frames, greatest allowable one-way delay is ____ µs.",
+    "answer": "480 bits; 6.4 µs.",
+    "keywords": [
+      "480",
+      "6.4"
+    ],
+    "explanation": "The round-trip time is $2 \\times 12\\,\\mu s = 24\\,\\mu s$, so the minimum frame is $L = R \\times 2d_{prop} = 20\\times10^6 \\times 24\\times10^{-6} = 480$ bits. For the second part, a 512-bit frame at 40 Mbps takes $512 / (40\\times10^6) = 12.8\\,\\mu s$ to transmit. That must be at least the round-trip time, so the one-way delay can be at most $12.8 / 2 = 6.4\\,\\mu s$.",
+    "hint": "Set transmission time $L/R$ equal to twice the one-way propagation delay."
+  },
+  {
+    "id": 7,
+    "type": "multiple_choice",
+    "question": "A packet contains the following data bits: 10010 00100 11000. Using an even-parity, two-dimensional parity scheme, determine the value of the parity bits in the last (bottom) row. The parity bit for each row has already been calculated and is shown in the rightmost column. Which of the following represents the correct parity bits for the last row? (Even parity: set the parity bit so there is an even number of 1's.)\n\n10010 0\n00100 1\n11000 0\n?????  ?",
+    "options": {
+      "A": "01111 0",
+      "B": "01010 1",
+      "C": "01110 1",
+      "D": "10001 0"
+    },
+    "answer": "C",
+    "explanation": "Count the 1's in each column: column 1 has $1+0+1=2$ → 0; column 2 has $0+0+1=1$ → 1; column 3 has $0+1+0=1$ → 1; column 4 has $1+0+0=1$ → 1; column 5 has $0+0+0=0$ → 0. The row-parity column has $0+1+0=1$ → 1. So the bottom row is 01110 1.",
+    "hint": "Apply even parity down each column, including the row-parity column."
+  },
+  {
+    "id": 8,
+    "type": "short_answer",
+    "question": "A 12 Mbit/s link sets its frame to have four fixed 2 ms slots in order A, B, C, D. Each slot is associated with a queue for subsequent frames waiting to transmit at the slot. The first slot (slot A) starts at t = 0. A frame arrives at B's empty queue at t = 4.1 ms. Frames can begin only at the start of the sender's own slot. No overhead needs to be considered in this problem. Fill in the following blanks.\n\nSlot B's frame transmission start time is at ____ ms; The frame's waiting time from arrival to transmit is ____ ms.\nIf only B is continuously backlogged (i.e., always has frames waiting in the queue), B's long-run rate is ____ Mbit/s.",
+    "answer": "Start at 10 ms; waiting time 5.9 ms; long-run rate 3 Mbit/s.",
+    "keywords": [
+      "10",
+      "5.9",
+      "3"
+    ],
+    "explanation": "One TDMA frame is $4 \\times 2 = 8$ ms, so B's slots start at 2, 10, 18, ... ms. The frame arrives at 4.1 ms, just after B's slot (2–4 ms) ended, so it waits for the next B slot at 10 ms. The waiting time is $10 - 4.1 = 5.9$ ms. In TDMA a node only gets its own slot even when the others are idle, so B gets 1/4 of the link: $12 / 4 = 3$ Mbit/s.",
+    "hint": "List the start times of B's slots across consecutive frames. Does TDMA let B use idle slots belonging to other nodes?"
+  },
+  {
+    "id": 9,
+    "type": "multiple_choice",
+    "question": "Consider the figure below, which shows the arrival of 6 messages for transmission at different multiple access wireless nodes at times t = 0.3, 1.7, 1.8, 2.5, 4.2, 4.6. Each transmission requires exactly one time unit.\n\nFor the CSMA/CD protocol (with collision detection), indicate which packets are successfully transmitted. You should assume that it takes .2 time units for a signal to propagate from one node to each of the other nodes. You can assume that if a packet experiences a collision or senses the channel busy, then that node will not attempt a retransmission of that packet until sometime after t=5. If a node senses a collision, it stops transmitting immediately (although it will still take .2 time units for the last transmitted bit to propagate to all other nodes). Hint: consider propagation times carefully here. Select all that apply.",
+    "images": [
+      "random_access_v4.jpg"
+    ],
+    "figure": "Timeline from t=0.0 to t=5.0 with packet arrivals: 1 at 0.3, 2 at 1.7, 3 at 1.8, 4 at 2.5, 5 at 4.2, 6 at 4.6.",
+    "options": {
+      "A": "1",
+      "B": "6",
+      "C": "3",
+      "D": "2",
+      "E": "5",
+      "F": "4"
+    },
+    "answer": [
+      "A",
+      "E",
+      "F"
+    ],
+    "explanation": "Packet 1 (0.3) finds the channel idle and transmits until 1.3: success. Packet 2 starts at 1.7; its signal does not reach packet 3's node until 1.9, so packet 3 also starts at 1.8 and they collide. Packet 3's node hears 2 at 1.9 and packet 2's node hears 3 at 2.0, and both abort; their last bits have cleared the channel by 2.2. Packet 4 (2.5) finds the channel idle and transmits until 3.5: success. Packet 5 (4.2) transmits until 5.2: success. Packet 6 (4.6) senses packet 5's signal (present since 4.4) and defers until after t=5. So packets 1, 4, and 5 succeed.",
+    "hint": "A node can only sense another transmission 0.2 time units after it starts. Check whether 2 and 3 can hear each other in time."
+  },
+  {
+    "id": 10,
+    "type": "multiple_choice",
+    "question": "True or False: Part of the link layer is implemented in a network adapter (or a network interface card).",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "A",
+    "explanation": "Most of the link layer (framing, link access/MAC, error detection, transmission) is implemented in hardware on the network adapter/NIC. The rest runs in software on the host's CPU, such as assembling addressing information and handing frames up to the network layer, so the link layer is a combination of hardware, software, and firmware.",
+    "hint": "Where do framing and MAC happen, on the host CPU or on a chip in the adapter?"
+  },
+  {
+    "id": 11,
+    "type": "multiple_choice",
+    "question": "Consider a node participating in a token passing scheme with N nodes in the network. The message transmission time is T. The token is a very small message; its transmission time is negligible. Which of the following statements are true? Select all that apply.",
+    "options": {
+      "A": "Token passing scheme needs to handle the single point of failure issue when a node on the ring fails.",
+      "B": "When a node has a message to transmit, its waiting time has an upper bound of (N-1)*T.",
+      "C": "The nodes in the network are organized into a ring.",
+      "D": "When a node has nothing to send, it passes the token to a random node on the ring."
+    },
+    "answer": [
+      "B",
+      "C"
+    ],
+    "explanation": "In token passing, the nodes form a (logical) ring and the token travels around it in a fixed order (C true, D false: the token goes to the next node, not a random one). In the worst case, each of the other N−1 nodes transmits one message of time T before the token arrives, so the wait is at most $(N-1)T$ (B true). The answer key marks A as false: 'single point of failure' is the term for polling's master node, while token passing is decentralized. (The quiz gave full credit on this question, so A may have been disputed, since a failed node or lost token does still need a recovery procedure.)",
+    "hint": "How does the token move between nodes, and what is the most transmission time that could happen before it reaches you?"
+  },
+  {
+    "id": 12,
+    "type": "multiple_choice",
+    "question": "In CSMA/CD, assume the initial back off window is [0,1]. After the 3rd consecutive collision, what is the window range for a node to choose the value of K?",
+    "options": {
+      "A": "[0,7]",
+      "B": "[0,8]",
+      "C": "[0,3]",
+      "D": "[1,4]"
+    },
+    "answer": "A",
+    "explanation": "With binary exponential backoff, after the n-th collision a node chooses K from $\\{0, 1, \\ldots, 2^n - 1\\}$. After collision 1 the window is [0,1], after collision 2 it is [0,3], and after collision 3 it is $[0, 2^3 - 1] = [0,7]$.",
+    "hint": "The window doubles in size after each collision: $2^n$ values starting at 0."
+  },
+  {
+    "id": 13,
+    "type": "multiple_choice",
+    "question": "Consider the figure below, which shows the arrival of 6 messages for transmission at different multiple access wireless nodes at times t=0.1, 1.4, 1.8, 3.2, 3.3, 4.1. Each transmission requires exactly one time unit.\n\nFor the slotted ALOHA protocol, indicate which packets are successfully transmitted. You can assume that if a packet experiences a collision, a node will not attempt a retransmission of that packet until sometime after t=5. Select all that apply.",
+    "images": [
+      "random_access_2.jpg"
+    ],
+    "figure": "Timeline from t=0.0 to t=5.0, with slot boundaries at each integer time. Packet arrivals: 1 at 0.1, 2 at 1.4, 3 at 1.8, 4 at 3.2, 5 at 3.3, 6 at 4.1.",
+    "options": {
+      "A": "5",
+      "B": "6",
+      "C": "2",
+      "D": "1",
+      "E": "3",
+      "F": "4"
+    },
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "In slotted ALOHA a node waits until the start of the next slot to transmit. Packet 1 (0.1) transmits in slot [1,2) alone: success. Packets 2 (1.4) and 3 (1.8) both transmit in slot [2,3) and collide. Packets 4 (3.2) and 5 (3.3) both transmit in slot [4,5) and collide. Packet 6 (4.1) transmits alone in slot [5,6): success. So packets 1 and 6 succeed.",
+    "hint": "Shift every arrival to the start of the next slot, then look for slots with more than one packet."
+  },
+  {
+    "id": 14,
+    "type": "multiple_choice",
+    "question": "Consider the figure below, which shows the arrival of 6 messages for transmission at different multiple access wireless nodes at times t=0.1, 1.4, 1.8, 3.2, 3.3, 4.1. Each transmission requires exactly one time unit.\n\nFor the CSMA protocol (without collision detection), indicate which packets are successfully transmitted. You should assume that it takes .2 time units for a signal to propagate from one node to each of the other nodes. You can assume that if a packet experiences a collision or senses the channel busy, then that node will not attempt a retransmission of that packet until sometime after t=5. Hint: consider propagation times carefully here. Select all that apply.",
+    "images": [
+      "random_access_2.jpg"
+    ],
+    "figure": "Timeline from t=0.0 to t=5.0. Packet arrivals: 1 at 0.1, 2 at 1.4, 3 at 1.8, 4 at 3.2, 5 at 3.3, 6 at 4.1.",
+    "options": {
+      "A": "2",
+      "B": "1",
+      "C": "3",
+      "D": "4",
+      "E": "5",
+      "F": "6"
+    },
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "Packet 1 (0.1) finds the channel idle and transmits until 1.1: success. Packet 2 (1.4) finds it idle and transmits until 2.4. Packet 3 (1.8) senses packet 2's signal (present since 1.6) and defers, so 2 succeeds. Packet 4 starts at 3.2, but its signal does not reach packet 5's node until 3.4, so packet 5 also starts at 3.3 and they collide. Without collision detection, both transmit for the full time unit (4 until 4.2, 5 until 4.3). Packet 6 (4.1) senses the channel busy and defers. So only packets 1 and 2 succeed.",
+    "hint": "Without collision detection, colliding packets keep transmitting for the whole time unit. Which later arrivals sense that activity?"
+  }
+]

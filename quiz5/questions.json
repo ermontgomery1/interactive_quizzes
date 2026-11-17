@@ -1,0 +1,264 @@
+[
+  {
+    "id": 1,
+    "type": "multiple_choice",
+    "question": "True or False: With distance vector algorithm, a router learns the cost to other routers from a global topology map obtained through an iterative process of computation and exchanging info with neighbors.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "Distance vector is a decentralized algorithm: a router never has a global topology map. It knows only the costs of its directly attached links and the distance vectors its neighbors advertise, and it iteratively applies the Bellman-Ford equation $D_x(y) = \\min_v \\{c(x,v) + D_v(y)\\}$. Building a global topology map is what link-state algorithms do.",
+    "hint": "Which routing algorithm class gives every router the complete topology, and which one only uses information from neighbors?"
+  },
+  {
+    "id": 2,
+    "type": "multiple_choice",
+    "question": "Consider the network shown below. Suppose AS1, AS2, AS3, and AS4 are running OSPF for their intra-AS routing protocol. Suppose eBGP and iBGP are used for the inter-AS routing protocol. Initially suppose there is no link between AS2 and AS4. Indicate the protocol by which a router learns about the network prefix x, which is attached to AS4.\n\n(1) Router 3c learns about prefix x from which protocol?\n(2) Router 3a learns about prefix x from which protocol?",
+    "images": [
+      "ebgp_ibgp_ospf.jpg"
+    ],
+    "figure": "Four autonomous systems. AS3 router 3c connects to AS4 router 4c; AS3 router 3a connects to AS1 router 1c; AS1 router 1b connects to AS2 router 2a; a dotted (initially absent) link joins 4a and 2a. Prefix x is attached to router 4a in AS4.",
+    "options": {
+      "A": "(1) eBGP, (2) iBGP",
+      "B": "(1) iBGP, (2) eBGP",
+      "C": "(1) eBGP, (2) eBGP",
+      "D": "(1) OSPF, (2) iBGP"
+    },
+    "answer": "A",
+    "explanation": "Router 3c is a gateway router with a direct eBGP session to 4c in AS4, so it learns about x from eBGP. Router 3a is inside AS3 relative to that session; 3c propagates the route to the other AS3 routers (including 3a) over iBGP. OSPF is only used to compute intra-AS paths, not to learn about external prefixes.",
+    "hint": "eBGP runs between routers in different ASes; iBGP distributes externally learned routes to routers inside the same AS."
+  },
+  {
+    "id": 3,
+    "type": "multiple_choice",
+    "question": "Match the name of the approach towards implementing a control plane with a description of how this approach works.\n\n(1) Per-router control plane\n(2) Software-defined networking (SDN)\n\nDescriptions:\n(X) Individual routing algorithm components, one operating in each and every router, interact with each other in the control plane. The routing algorithm component executing in a given router computes the local forwarding table for that router.\n(Y) A (typically) remote controller gathers information from routers, and then computes and installs the forwarding tables in routers.",
+    "options": {
+      "A": "(1) X, (2) Y",
+      "B": "(1) Y, (2) X",
+      "C": "(1) X, (2) X",
+      "D": "(1) Y, (2) Y"
+    },
+    "answer": "A",
+    "explanation": "In the traditional per-router approach, every router runs its own routing algorithm component and computes its own forwarding table by interacting with the other routers. In SDN, a logically centralized (usually remote) controller collects state from the routers, computes the forwarding tables, and installs them in the routers.",
+    "hint": "Which approach has a logically centralized controller?"
+  },
+  {
+    "id": 4,
+    "type": "short_answer",
+    "question": "Router X has only the three neighbors listed below and has no direct link to destination Z. The advertised distances are the values currently available to X. Compute X's new route to Z.\n\nX's next hop is ____ and its distance to Z is ____.",
+    "images": [
+      "P6-Table Fig.jpg"
+    ],
+    "figure": "Neighbor A: cost from X = 2, advertised distance to Z = 7. Neighbor B: cost from X = 5, advertised distance to Z = 2. Neighbor C: cost from X = 1, advertised distance to Z = 9.",
+    "answer": "Next hop B, distance 7.",
+    "keywords": [
+      "B",
+      "7"
+    ],
+    "explanation": "Apply the Bellman-Ford equation $D_X(Z) = \\min_v \\{c(X,v) + D_v(Z)\\}$. Via A: $2 + 7 = 9$. Via B: $5 + 2 = 7$. Via C: $1 + 9 = 10$. The minimum is 7, through neighbor B.",
+    "hint": "For each neighbor, add the cost to reach that neighbor to the distance it advertises, then take the minimum."
+  },
+  {
+    "id": 5,
+    "type": "multiple_choice",
+    "question": "Consider the OSPF routing protocol. Which of the following characteristics are associated with OSPF (as opposed to BGP)? Select all that apply.",
+    "options": {
+      "A": "Is an inter-domain routing protocol.",
+      "B": "Is an intra-domain routing protocol.",
+      "C": "Policy, rather than performance (e.g., least cost path), determines paths that are used.",
+      "D": "Finds a least cost path from source to destination within a domain.",
+      "E": "Floods link state control information."
+    },
+    "answer": [
+      "B",
+      "D",
+      "E"
+    ],
+    "explanation": "OSPF is an intra-domain (intra-AS) link-state protocol: each router floods its link-state advertisements to every router in the AS and then runs Dijkstra to find least-cost paths. Being inter-domain and having policy dominate over performance are characteristics of BGP.",
+    "hint": "OSPF runs inside a single AS and is a link-state protocol. BGP runs between ASes and is policy-driven."
+  },
+  {
+    "id": 6,
+    "type": "multiple_choice",
+    "question": "True or False: Every router in an autonomous system must use the same intra-autonomous system routing algorithm.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "A",
+    "explanation": "An autonomous system is a group of routers under the same administrative control that all run the same intra-AS routing protocol (e.g., all OSPF), so they can exchange routing information and compute consistent paths. Different ASes may run different intra-AS protocols; BGP glues them together.",
+    "hint": "Think about how an AS is defined in the textbook: routers under the same administrative control running a common intra-AS protocol."
+  },
+  {
+    "id": 7,
+    "type": "multiple_choice",
+    "question": "True or False: When an OSPF router sends its link state information, it is sent only to those directly attached neighbors.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "OSPF broadcasts (floods) link-state advertisements to all routers in the autonomous system, not just to directly attached neighbors, so that every router builds a complete topology map. Sending information only to neighbors is characteristic of distance vector protocols such as RIP.",
+    "hint": "For every router to run Dijkstra, every router needs every other router's link-state information."
+  },
+  {
+    "id": 8,
+    "type": "short_answer",
+    "question": "Dijkstra's algorithm runs from S on the undirected graph. Only the drawn links exist. Each link has the displayed cost in both directions.\n\n(a) After S, in what order do the nodes' least-cost paths become definitively known?\n(b) What is the shortest path from S to D, and what is its total cost?\n(c) Link A-B then fails. After all link-state information is updated, what is the new shortest path from S to D, and what is its cost?",
+    "images": [
+      "New Topo.jpg"
+    ],
+    "figure": "Undirected graph with links S-A (2), S-B (7), A-B (1), A-C (5), B-C (2), B-D (8), C-D (1).",
+    "answer": "(a) A, B, C, D. (b) S-A-B-C-D with total cost 6. (c) S-A-C-D with cost 8.",
+    "keywords": [
+      "A, B, C, D",
+      "ABCD",
+      "SABCD",
+      "S-A-B-C-D",
+      "SACD",
+      "S-A-C-D",
+      "6",
+      "8"
+    ],
+    "explanation": "Initially $D(A)=2$, $D(B)=7$. Add A (2); update $D(B)=\\min(7, 2+1)=3$, $D(C)=2+5=7$. Add B (3); update $D(C)=\\min(7, 3+2)=5$, $D(D)=3+8=11$. Add C (5); update $D(D)=\\min(11, 5+1)=6$. Add D (6). So the order is A, B, C, D and the path S-A-B-C-D costs $2+1+2+1=6$. Without link A-B: S-A-C-D costs $2+5+1=8$, S-B-C-D costs $7+2+1=10$, and S-B-D costs $7+8=15$, so the new path is S-A-C-D with cost 8.",
+    "hint": "At each step, add the not-yet-finalized node with the smallest current distance, then relax its neighbors."
+  },
+  {
+    "id": 9,
+    "type": "multiple_choice",
+    "question": "Consider Dijkstra's link-state routing algorithm that is computing a least-cost path from node a to other nodes b, c, d, e, f. Which of the following statements are true? Select all that apply.",
+    "options": {
+      "A": "The values computed in the vector D(v), the currently known least cost of a path from a to any node v, will always decrease following an iteration.",
+      "B": "Suppose nodes b, c, and d are in the set N'. These nodes will remain in N' for the rest of the algorithm, since the least-cost paths from a to b, c, and d are known.",
+      "C": "In the initialization step, the initial cost from a to each of these destinations is initialized to either the cost of a link directly connecting a to a direct neighbor, or infinity otherwise.",
+      "D": "The values computed in the vector D(v), the currently known least cost of a path from a to any node v, will never increase following an iteration.",
+      "E": "Following the initialization step, if nodes b and c are directly connected to a, then the least cost path to b and c will never change from this initial cost."
+    },
+    "answer": [
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation": "Once a node enters N' its least-cost path is final and it is never removed. Initialization sets $D(v) = c(a,v)$ for direct neighbors and $\\infty$ otherwise. Each update is $D(v) = \\min(D(v), D(w) + c(w,v))$, so D(v) can only stay the same or decrease: it never increases, but it does not always decrease (A is false). E is false because an indirect path can be cheaper than a direct link (e.g., a-x-b cheaper than a-b).",
+    "hint": "Look at the update rule D(v) = min(D(v), D(w) + c(w,v)). What can a min() do to a value?"
+  },
+  {
+    "id": 10,
+    "type": "multiple_choice",
+    "question": "Pick the properties that are true of the link-state algorithm. Choose one or multiple correct answers.",
+    "options": {
+      "A": "It requires the source node to know the costs between every pair of adjacent nodes in the network graph.",
+      "B": "It determines the shortest path from the source node to all other nodes.",
+      "C": "Count-to-infinity can occur.",
+      "D": "After the kth iteration, the least-cost paths are known to k nodes."
+    },
+    "answer": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explanation": "Link-state (Dijkstra) is a global algorithm: the source needs the complete topology and all link costs. It computes least-cost paths from the source to every other node, and each iteration finalizes exactly one more node, so after k iterations the least-cost paths to k destinations are known. Count-to-infinity is a problem of distance vector algorithms, not link state.",
+    "hint": "Link state is a global, iterative algorithm that finalizes one node per iteration. Which problem belongs to distance vector instead?"
+  },
+  {
+    "id": 11,
+    "type": "multiple_choice",
+    "question": "Match each item to its role. Use A = AS_PATH; B = NEXT_HOP; C = LOCAL_PREF; D = destination prefix. Use each letter once.\n\n(1) Identifies the destination address block being advertised.\n(2) Records the AS sequence used for AS-loop detection and path-length comparison.\n(3) Identifies the IP address that must be reachable to use the BGP route.\n(4) Expresses preference within an AS; a larger value is preferred.",
+    "options": {
+      "A": "(1) D, (2) A, (3) B, (4) C",
+      "B": "(1) A, (2) D, (3) B, (4) C",
+      "C": "(1) D, (2) B, (3) A, (4) C",
+      "D": "(1) D, (2) A, (3) C, (4) B"
+    },
+    "answer": "A",
+    "explanation": "A BGP route is a prefix plus attributes. The destination prefix identifies the advertised address block. AS_PATH lists the ASes the advertisement passed through; it is used to detect loops (a router rejects a path containing its own AS) and to prefer shorter AS paths. NEXT_HOP is the IP address of the router interface that begins the AS_PATH and must be reachable. LOCAL_PREF is a policy value set within an AS, where higher is preferred.",
+    "hint": "Which attribute is a list of AS numbers? Which one is an IP address? Which one is a locally assigned policy number?"
+  },
+  {
+    "id": 12,
+    "type": "multiple_choice",
+    "question": "Suppose a provider network only wants to carry traffic to/from its customer networks (i.e., to provide no transit service), and customer networks only want to carry traffic to/from themselves. Consider the figure below. Suppose C has advertised path Cy to A. To implement this policy, to which of the following networks would network A advertise the path ACy?",
+    "images": [
+      "Policy(1).jpg"
+    ],
+    "figure": "Provider networks A, B, and C are interconnected. Customer w attaches to A; customer x attaches to both B and C; customer y attaches to C.",
+    "options": {
+      "A": "w",
+      "B": "B",
+      "C": "C",
+      "D": "x"
+    },
+    "answer": "A",
+    "explanation": "A learned ACy from provider C. A advertises it to its own customer w so w can reach y through A. A does not advertise it to provider B, since B would then route traffic for y through A, making A carry transit traffic between two providers that is neither from nor to one of A's customers. Advertising back to C is pointless, and x is not connected to A.",
+    "hint": "A provider advertises routes learned from other providers only to its own customers."
+  },
+  {
+    "id": 13,
+    "type": "multiple_choice",
+    "question": "Consider the graph shown below and the use of Dijkstra's algorithm to compute a least cost path from a to all destinations. Suppose that nodes b and d have already been added to N'. What is the next node to be added to N'?",
+    "images": [
+      "Dijsktra_kc_network.png"
+    ],
+    "figure": "Graph with links a-b (2), a-c (5), a-d (3), b-c (5), b-d (6), c-d (3), c-e (2), d-e (1), d-f (3), e-f (7). Arrows highlight a-b and a-d.",
+    "options": {
+      "A": "c",
+      "B": "e",
+      "C": "f"
+    },
+    "answer": "B",
+    "explanation": "With N' = {a, b, d}: $D(b)=2$ and $D(d)=3$. Then $D(c) = \\min(5, 2+5, 3+3) = 5$, $D(e) = 3+1 = 4$, and $D(f) = 3+3 = 6$. The smallest distance not yet in N' is e (4), so e is added next.",
+    "hint": "Relax all links out of b and d, then pick the remaining node with the smallest current distance."
+  },
+  {
+    "id": 14,
+    "type": "multiple_choice",
+    "question": "True or False: In the BGP routing algorithm, each AS advertises to its neighbors its estimates of the shortest distances from the AS to all possible destination ASs.",
+    "options": {
+      "A": "True",
+      "B": "False"
+    },
+    "answer": "B",
+    "explanation": "BGP is a path-vector protocol: an AS advertises reachability to destination prefixes along with attributes such as the full AS_PATH and NEXT_HOP, not distance estimates. Route selection is driven by policy (LOCAL_PREF, etc.) rather than by shortest distance, and an AS may choose not to advertise some routes at all. Advertising distance estimates to neighbors describes distance vector routing.",
+    "hint": "Does BGP advertise distances, or paths to prefixes? And does it advertise everything?"
+  },
+  {
+    "id": 15,
+    "type": "multiple_choice",
+    "question": "Consider the network below with interconnected provider networks and customer networks. Assume that provider network D only wants to carry traffic that originates in one of its customer networks (w, z) or is destined to one of its customer networks. It specifically does not want to forward datagrams between two other provider networks, since that transit traffic is neither sourced from, nor destined to, a customer network of D.\n\nGiven these policies, to which other networks will network D advertise the path Dw? Select all that apply.",
+    "images": [
+      "bgp_policy_1.jpg"
+    ],
+    "figure": "Provider networks A, B, C, D. Links: A-B, A-D, B-D, B-C, D-C. Customer z attaches to A and D; customer w attaches to D; customer x attaches to B and C; customer y attaches to C.",
+    "options": {
+      "A": "y",
+      "B": "C",
+      "C": "x",
+      "D": "B",
+      "E": "z",
+      "F": "A"
+    },
+    "answer": [
+      "B",
+      "D",
+      "E",
+      "F"
+    ],
+    "explanation": "Dw is a route to D's own customer w, so carrying traffic toward w is exactly what D wants. D advertises Dw to every network it is directly connected to: providers A, B, and C, and its other customer z. Networks x and y are not directly connected to D, so D cannot advertise to them (they may learn about w through B or C instead).",
+    "hint": "Traffic destined to D's own customer is never transit traffic for D. Which networks are directly connected to D?"
+  },
+  {
+    "id": 16,
+    "type": "multiple_choice",
+    "question": "A university administers one autonomous system and connects to two independently administered providers. It wants internal least-cost routes and control over which external routes it accepts and advertises. Which one of the following assignments of responsibilities is appropriate?",
+    "options": {
+      "A": "OSPF applies business policy between providers; BGP replaces all internal shortest-path computation.",
+      "B": "BGP requires the university and both providers to assign identical internal link costs.",
+      "C": "OSPF handles internal routing; BGP exchanges external reachability and applies routing policy.",
+      "D": "OSPF must run across all three autonomous systems with one shared link-state database."
+    },
+    "answer": "C",
+    "explanation": "An intra-AS protocol such as OSPF computes least-cost paths inside the university's AS. BGP is the inter-AS protocol that exchanges reachability with the providers and lets the university apply import/export policy. Each AS chooses its own internal protocol and link costs, and OSPF does not span multiple independently administered ASes.",
+    "hint": "Intra-AS routing focuses on performance; inter-AS routing focuses on policy."
+  }
+]
