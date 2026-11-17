@@ -48,14 +48,19 @@
         html.fc-mode main { overflow: hidden; min-height: 0; justify-content: flex-start; }
         html.fc-mode footer { display: none; }
         html.fc-mode #flashcard-view { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin-bottom: 0; }
-        html.fc-mode .fc-scene { flex: 1 1 auto; min-height: 0; max-height: 24rem; }
+        /* The card takes all free height (capped on big screens so it doesn't get absurdly tall) */
+        html.fc-mode .fc-scene { flex: 1 1 auto; min-height: 0; max-height: 40rem; }
         html.fc-mode #fc-card { height: 100%; }
-        /* Phones: the card takes all free height, and the jump/settings panel becomes a bottom sheet */
+        /* The jump/settings panel opens from the gear button: a centred dialog on larger screens... */
+        .fc-settings { display: none; position: fixed; inset: 0; z-index: 50; background: rgb(2 6 23 / 0.7);
+            align-items: center; justify-content: center; padding: 1rem; }
+        .fc-settings.open { display: flex; }
+        #fc-settings .fc-settings-panel { width: 100%; max-width: 32rem; padding: 1.25rem; }
+        /* ...and a bottom sheet on phones */
         @media (max-width: 639px) {
             html.fc-mode .fc-scene { max-height: none; }
-            .fc-settings { display: none; position: fixed; inset: 0; z-index: 50; background: rgb(2 6 23 / 0.7); align-items: flex-end; }
-            .fc-settings.open { display: flex; }
-            #fc-settings .fc-settings-panel { width: 100%; border-radius: 1rem 1rem 0 0; border-bottom: 0;
+            .fc-settings { align-items: flex-end; padding: 0; }
+            #fc-settings .fc-settings-panel { max-width: none; border-radius: 1rem 1rem 0 0; border-bottom: 0;
                 padding: 1.25rem 1rem max(1.25rem, env(safe-area-inset-bottom)); }
         }
         /* Star toggle on each card face */
@@ -192,7 +197,7 @@
                 <div class="flex items-center gap-1">
                     <span id="fc-counter" class="text-sm text-slate-400 font-medium text-center">Card 1 of 1</span>
                     <!-- Mobile only: the jump/settings panel lives in a pop-up sheet to leave room for the card -->
-                    <button type="button" onclick="openSettings()" id="fc-settings-btn" class="sm:hidden w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-200" aria-label="Flashcard settings" aria-haspopup="dialog" aria-controls="fc-settings">
+                    <button type="button" onclick="openSettings()" id="fc-settings-btn" title="Settings" class="w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-200" aria-label="Flashcard settings" aria-haspopup="dialog" aria-controls="fc-settings">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3c.4-1.7 3-1.7 3.4 0a1.7 1.7 0 002.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 001 2.5c1.8.4 1.8 3 0 3.4a1.7 1.7 0 00-1 2.6c.9 1.5-.9 3.3-2.4 2.4a1.7 1.7 0 00-2.6 1c-.4 1.8-3 1.8-3.4 0a1.7 1.7 0 00-2.5-1c-1.6.9-3.3-.9-2.4-2.4a1.7 1.7 0 00-1.1-2.6c-1.7-.4-1.7-3 0-3.4a1.7 1.7 0 001.1-2.5c-.9-1.6.8-3.3 2.4-2.4a1.7 1.7 0 002.5-1.1z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                 </div>
@@ -200,9 +205,9 @@
             </div>
 
             <!-- Inline panel on larger screens; a bottom-sheet "settings page" on phones -->
-            <div id="fc-settings" class="fc-settings sm:mt-6" onclick="if (event.target === this) closeSettings()">
+            <div id="fc-settings" class="fc-settings" onclick="if (event.target === this) closeSettings()">
             <div class="fc-settings-panel bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3" role="dialog" aria-labelledby="fc-settings-title">
-                <div class="flex justify-between items-center sm:hidden">
+                <div class="flex justify-between items-center">
                     <h2 id="fc-settings-title" class="text-base font-semibold text-slate-100">Settings</h2>
                     <button type="button" onclick="closeSettings()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium">Done</button>
                 </div>
@@ -569,8 +574,8 @@
         // ---------- End slide animation ----------
 
         const FC_TEXT_BASE = "flex-1 flex items-center justify-center text-center text-slate-100 overflow-y-auto";
-        const FC_TERM_TEXT = "text-3xl md:text-3xl font-semibold";
-        const FC_DEF_TEXT = "text-xl md:text-lg leading-relaxed";
+        const FC_TERM_TEXT = "text-3xl md:text-4xl font-semibold";
+        const FC_DEF_TEXT = "text-xl md:text-2xl leading-relaxed";
 
         // ---------- Mobile settings sheet ----------
         function openSettings() {
