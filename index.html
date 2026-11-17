@@ -50,6 +50,14 @@
         html.fc-mode #flashcard-view { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin-bottom: 0; }
         html.fc-mode .fc-scene { flex: 1 1 auto; min-height: 0; max-height: 24rem; }
         html.fc-mode #fc-card { height: 100%; }
+        /* Phones: the card takes all free height, and the jump/settings panel becomes a bottom sheet */
+        @media (max-width: 639px) {
+            html.fc-mode .fc-scene { max-height: none; }
+            .fc-settings { display: none; position: fixed; inset: 0; z-index: 50; background: rgb(2 6 23 / 0.7); align-items: flex-end; }
+            .fc-settings.open { display: flex; }
+            #fc-settings .fc-settings-panel { width: 100%; border-radius: 1rem 1rem 0 0; border-bottom: 0;
+                padding: 1.25rem 1rem max(1.25rem, env(safe-area-inset-bottom)); }
+        }
         /* Star toggle on each card face */
         .fc-star svg { fill: none; }
         .fc-star[aria-pressed="true"] { color: #fbbf24; }
@@ -158,22 +166,22 @@
                 <div id="fc-card" class="fc-card relative h-[22rem] sm:h-80 md:h-96 cursor-pointer select-none" onclick="onCardClick()" title="Click or press Space to flip">
                     <div class="fc-face fc-front-face absolute inset-0 bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
                         <div class="flex justify-between items-center -mt-2 -mr-2">
-                            <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">Term</span>
+                            <span id="fc-front-label" class="text-xs text-slate-400 uppercase tracking-wider font-medium">Definition</span>
                             <button type="button" class="fc-star w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-amber-300 transition" onclick="toggleStar(event)" aria-pressed="false" aria-label="Star this card" title="Star this card (S)">
                                 <svg class="w-6 h-6" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9z"/></svg>
                             </button>
                         </div>
-                        <div id="fc-front" class="flex-1 flex items-center justify-center text-center text-xl sm:text-2xl md:text-3xl font-semibold text-slate-100 overflow-y-auto"></div>
+                        <div id="fc-front" class="flex-1 flex items-center justify-center text-center text-slate-100 overflow-y-auto"></div>
                         <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip</span><span class="touch-only">Tap to flip &bull; Swipe for next/previous</span></span>
                     </div>
                     <div class="fc-face fc-back absolute inset-0 bg-indigo-950 border border-indigo-500/40 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
                         <div class="flex justify-between items-center -mt-2 -mr-2">
-                            <span class="text-xs text-indigo-300 uppercase tracking-wider font-medium">Definition</span>
+                            <span id="fc-back-label" class="text-xs text-indigo-300 uppercase tracking-wider font-medium">Term</span>
                             <button type="button" class="fc-star w-11 h-11 flex items-center justify-center rounded-full text-indigo-300 hover:text-amber-300 transition" onclick="toggleStar(event)" aria-pressed="false" aria-label="Star this card" title="Star this card (S)">
                                 <svg class="w-6 h-6" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9z"/></svg>
                             </button>
                         </div>
-                        <div id="fc-back" class="flex-1 flex items-center justify-center text-center text-base md:text-lg leading-relaxed text-slate-100 overflow-y-auto"></div>
+                        <div id="fc-back" class="flex-1 flex items-center justify-center text-center text-slate-100 overflow-y-auto"></div>
                         <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip back</span><span class="touch-only">Tap to flip back &bull; Swipe for next/previous</span></span>
                     </div>
                 </div>
@@ -181,11 +189,23 @@
 
             <div class="flex items-center justify-between gap-2 sm:gap-4 mt-4 sm:mt-6">
                 <button onclick="prevCard()" id="fc-prev" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed px-4 sm:px-5 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition">&larr; <span class="hidden sm:inline">Previous</span><span class="sm:hidden">Prev</span></button>
-                <span id="fc-counter" class="text-sm text-slate-400 font-medium text-center">Card 1 of 1</span>
+                <div class="flex items-center gap-1">
+                    <span id="fc-counter" class="text-sm text-slate-400 font-medium text-center">Card 1 of 1</span>
+                    <!-- Mobile only: the jump/settings panel lives in a pop-up sheet to leave room for the card -->
+                    <button type="button" onclick="openSettings()" id="fc-settings-btn" class="sm:hidden w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-200" aria-label="Flashcard settings" aria-haspopup="dialog" aria-controls="fc-settings">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3c.4-1.7 3-1.7 3.4 0a1.7 1.7 0 002.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 001 2.5c1.8.4 1.8 3 0 3.4a1.7 1.7 0 00-1 2.6c.9 1.5-.9 3.3-2.4 2.4a1.7 1.7 0 00-2.6 1c-.4 1.8-3 1.8-3.4 0a1.7 1.7 0 00-2.5-1c-1.6.9-3.3-.9-2.4-2.4a1.7 1.7 0 00-1.1-2.6c-1.7-.4-1.7-3 0-3.4a1.7 1.7 0 001.1-2.5c-.9-1.6.8-3.3 2.4-2.4a1.7 1.7 0 002.5-1.1z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
                 <button onclick="nextCard()" id="fc-next" class="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 sm:px-5 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition">Next &rarr;</button>
             </div>
 
-            <div class="mt-4 sm:mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3">
+            <!-- Inline panel on larger screens; a bottom-sheet "settings page" on phones -->
+            <div id="fc-settings" class="fc-settings sm:mt-6" onclick="if (event.target === this) closeSettings()">
+            <div class="fc-settings-panel bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3" role="dialog" aria-labelledby="fc-settings-title">
+                <div class="flex justify-between items-center sm:hidden">
+                    <h2 id="fc-settings-title" class="text-base font-semibold text-slate-100">Settings</h2>
+                    <button type="button" onclick="closeSettings()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium">Done</button>
+                </div>
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <label for="fc-slider" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jump to Card</label>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -194,13 +214,14 @@
                             <span>Starred only (<span id="fc-starred-count">0</span>)</span>
                         </label>
                         <label class="flex items-center space-x-2 text-sm sm:text-xs text-slate-400 cursor-pointer py-1">
-                            <input type="checkbox" id="fc-def-first" onchange="toggleDefinitionFirst(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
+                            <input type="checkbox" id="fc-def-first" checked onchange="toggleDefinitionFirst(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
                             <span>Show definition first</span>
                         </label>
                     </div>
                 </div>
                 <input type="range" id="fc-slider" min="1" max="1" value="1" oninput="showCard(this.value - 1)" class="w-full h-6 accent-indigo-500">
                 <p class="text-xs text-slate-500 pointer-only">Keyboard: &larr; / &rarr; to move, Space or &uarr; to flip, S to star.</p>
+            </div>
             </div>
         </div>
 
@@ -282,7 +303,20 @@
         // ---------- Flashcards ----------
         let cards = [];
         let cardIndex = 0;
-        let definitionFirst = false;
+        let definitionFirst = true;
+
+        // ---------- Saved settings ----------
+        // Flashcard settings ("Show definition first", "Starred only") are remembered in this browser
+        const SETTINGS_KEY = "ccn-flashcard-settings";
+        function loadSettings() {
+            try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}") || {}; }
+            catch { return {}; }
+        }
+        function saveSettings() {
+            try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ definitionFirst, starredOnly })); }
+            catch { /* storage unavailable */ }
+        }
+        // ---------- End saved settings ----------
 
         // ---------- Starred cards ----------
         // Stars are remembered per deck in this browser, keyed by the card's term
@@ -312,6 +346,7 @@
 
         function toggleStarredOnly(checked) {
             starredOnly = checked;
+            saveSettings();
             rebuildDeck();
         }
 
@@ -386,7 +421,11 @@
             }
             originalCards = [...cards];
             loadStars(set);
-            starredOnly = false;
+            // Restore saved settings (starred-only falls back to all cards if none are starred)
+            const saved = loadSettings();
+            if (typeof saved.definitionFirst === "boolean") definitionFirst = saved.definitionFirst;
+            starredOnly = saved.starredOnly === true;
+            document.getElementById("fc-def-first").checked = definitionFirst;
             rebuildDeck();
         }
 
@@ -401,8 +440,15 @@
             void cardEl.offsetWidth;
             animated.forEach(el => { el.style.transition = ""; });
 
-            document.getElementById("fc-front").textContent = definitionFirst ? card.definition : card.term;
-            document.getElementById("fc-back").textContent = definitionFirst ? card.term : card.definition;
+            const front = document.getElementById("fc-front");
+            const back = document.getElementById("fc-back");
+            front.textContent = definitionFirst ? card.definition : card.term;
+            back.textContent = definitionFirst ? card.term : card.definition;
+            // Size text by what it is (short term = big, long definition = smaller), whichever side it's on
+            front.className = `${FC_TEXT_BASE} ${definitionFirst ? FC_DEF_TEXT : FC_TERM_TEXT}`;
+            back.className = `${FC_TEXT_BASE} ${definitionFirst ? FC_TERM_TEXT : FC_DEF_TEXT}`;
+            document.getElementById("fc-front-label").innerText = definitionFirst ? "Definition" : "Term";
+            document.getElementById("fc-back-label").innerText = definitionFirst ? "Term" : "Definition";
             document.getElementById("fc-counter").innerText = `Card ${cardIndex + 1} of ${cards.length}`;
             document.getElementById("progress-text").innerText = `Card ${cardIndex + 1} of ${cards.length}`;
             document.getElementById("progress-bar").style.width = `${((cardIndex + 1) / cards.length) * 100}%`;
@@ -522,13 +568,33 @@
         function prevCard() { if (cardIndex > 0) slideToCard(cardIndex - 1, -1); }
         // ---------- End slide animation ----------
 
+        const FC_TEXT_BASE = "flex-1 flex items-center justify-center text-center text-slate-100 overflow-y-auto";
+        const FC_TERM_TEXT = "text-3xl md:text-3xl font-semibold";
+        const FC_DEF_TEXT = "text-xl md:text-lg leading-relaxed";
+
+        // ---------- Mobile settings sheet ----------
+        function openSettings() {
+            document.getElementById("fc-settings").classList.add("open");
+            document.querySelector("#fc-settings button").focus();
+        }
+        function closeSettings() {
+            document.getElementById("fc-settings").classList.remove("open");
+            document.getElementById("fc-settings-btn").focus();
+        }
+        // ---------- End mobile settings sheet ----------
+
         function toggleDefinitionFirst(checked) {
             definitionFirst = checked;
+            saveSettings();
             showCard(cardIndex);
         }
 
         document.addEventListener("keydown", e => {
             if (mode !== "flashcards") return;
+            if (document.getElementById("fc-settings").classList.contains("open")) {
+                if (e.key === "Escape") closeSettings();
+                return;
+            }
             const tag = (e.target.tagName || "").toLowerCase();
             if (["textarea", "select", "input"].includes(tag) && e.target.type !== "range" && e.target.type !== "checkbox") return;
             if (e.key === "ArrowRight") { e.preventDefault(); nextCard(); }
