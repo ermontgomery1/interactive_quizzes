@@ -18,7 +18,7 @@ Autonomous system (AS)	Group of routers under the same administrative control, i
 Intra-AS routing protocol	Routing protocol that determines routing paths among routers located within the same autonomous system.
 Open Shortest Path First (OSPF)	A publicly specified link-state intra-AS routing protocol that floods link-state advertisements and runs Dijkstra's algorithm.
 Inter-AS routing protocol	Routing protocol that coordinates route determination across multiple autonomous systems.
-BGP	Border Gateway Protocol, the decentralized, asynchronous inter-AS routing protocol that glues Internet ISPs together using CIDRized prefixes.
+Border Gateway Protocol (BGP)	The decentralized, asynchronous inter-AS routing protocol that glues Internet ISPs together using CIDRized prefixes.
 CIDRized prefix	Subnet or collection of subnets represented in CIDR notation (such as 138.16.68/22) to which BGP routes packets.
 Gateway router	Router on the edge of an autonomous system that directly connects to one or more routers in other autonomous systems.
 Internal router	Router that connects only to hosts and other routers within its own autonomous system.

@@ -41,6 +41,19 @@
         .fc-scene { will-change: transform; }
         #flashcard-view { overflow-x: clip; }
         body { -webkit-tap-highlight-color: transparent; }
+        /* Flashcard mode: everything fits in one screen and the page itself never scrolls, so
+           swiping a card sideways can't nudge the page up or down. The card shrinks to fit. */
+        html.fc-mode, html.fc-mode body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+        html.fc-mode body { height: 100dvh; min-height: 0; }
+        html.fc-mode main { overflow: hidden; min-height: 0; justify-content: flex-start; }
+        html.fc-mode footer { display: none; }
+        html.fc-mode #flashcard-view { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; margin-bottom: 0; }
+        html.fc-mode .fc-scene { flex: 1 1 auto; min-height: 0; max-height: 24rem; }
+        html.fc-mode #fc-card { height: 100%; }
+        /* Star toggle on each card face */
+        .fc-star svg { fill: none; }
+        .fc-star[aria-pressed="true"] { color: #fbbf24; }
+        .fc-star[aria-pressed="true"] svg { fill: currentColor; }
         .touch-only { display: none; }
         @media (hover: none) and (pointer: coarse) {
             .touch-only { display: inline; }
@@ -144,12 +157,22 @@
             <div class="fc-scene">
                 <div id="fc-card" class="fc-card relative h-[22rem] sm:h-80 md:h-96 cursor-pointer select-none" onclick="onCardClick()" title="Click or press Space to flip">
                     <div class="fc-face fc-front-face absolute inset-0 bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
-                        <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">Term</span>
+                        <div class="flex justify-between items-center -mt-2 -mr-2">
+                            <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">Term</span>
+                            <button type="button" class="fc-star w-11 h-11 flex items-center justify-center rounded-full text-slate-400 hover:text-amber-300 transition" onclick="toggleStar(event)" aria-pressed="false" aria-label="Star this card" title="Star this card (S)">
+                                <svg class="w-6 h-6" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9z"/></svg>
+                            </button>
+                        </div>
                         <div id="fc-front" class="flex-1 flex items-center justify-center text-center text-xl sm:text-2xl md:text-3xl font-semibold text-slate-100 overflow-y-auto"></div>
                         <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip</span><span class="touch-only">Tap to flip &bull; Swipe for next/previous</span></span>
                     </div>
                     <div class="fc-face fc-back absolute inset-0 bg-indigo-950 border border-indigo-500/40 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
-                        <span class="text-xs text-indigo-300 uppercase tracking-wider font-medium">Definition</span>
+                        <div class="flex justify-between items-center -mt-2 -mr-2">
+                            <span class="text-xs text-indigo-300 uppercase tracking-wider font-medium">Definition</span>
+                            <button type="button" class="fc-star w-11 h-11 flex items-center justify-center rounded-full text-indigo-300 hover:text-amber-300 transition" onclick="toggleStar(event)" aria-pressed="false" aria-label="Star this card" title="Star this card (S)">
+                                <svg class="w-6 h-6" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9z"/></svg>
+                            </button>
+                        </div>
                         <div id="fc-back" class="flex-1 flex items-center justify-center text-center text-base md:text-lg leading-relaxed text-slate-100 overflow-y-auto"></div>
                         <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip back</span><span class="touch-only">Tap to flip back &bull; Swipe for next/previous</span></span>
                     </div>
@@ -165,13 +188,19 @@
             <div class="mt-4 sm:mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3">
                 <div class="flex flex-wrap justify-between items-center gap-2">
                     <label for="fc-slider" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jump to Card</label>
-                    <label class="flex items-center space-x-2 text-sm sm:text-xs text-slate-400 cursor-pointer py-1">
-                        <input type="checkbox" id="fc-def-first" onchange="toggleDefinitionFirst(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
-                        <span>Show definition first</span>
-                    </label>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <label id="fc-starred-label" class="flex items-center space-x-2 text-sm sm:text-xs text-slate-400 cursor-pointer py-1">
+                            <input type="checkbox" id="fc-starred-only" onchange="toggleStarredOnly(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
+                            <span>Starred only (<span id="fc-starred-count">0</span>)</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm sm:text-xs text-slate-400 cursor-pointer py-1">
+                            <input type="checkbox" id="fc-def-first" onchange="toggleDefinitionFirst(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
+                            <span>Show definition first</span>
+                        </label>
+                    </div>
                 </div>
                 <input type="range" id="fc-slider" min="1" max="1" value="1" oninput="showCard(this.value - 1)" class="w-full h-6 accent-indigo-500">
-                <p class="text-xs text-slate-500 pointer-only">Keyboard: &larr; / &rarr; to move, Space or &uarr; to flip.</p>
+                <p class="text-xs text-slate-500 pointer-only">Keyboard: &larr; / &rarr; to move, Space or &uarr; to flip, S to star.</p>
             </div>
         </div>
 
@@ -234,8 +263,7 @@
         function toggleShuffle() {
             shuffled = !shuffled;
             if (mode === "flashcards") {
-                cards = shuffled ? randomOrder(originalCards.length).map(i => originalCards[i]) : [...originalCards];
-                showCard(0);
+                rebuildDeck();
             } else if (questions.length) {
                 const order = shuffled
                     ? randomOrder(questions.length)
@@ -256,6 +284,71 @@
         let cardIndex = 0;
         let definitionFirst = false;
 
+        // ---------- Starred cards ----------
+        // Stars are remembered per deck in this browser, keyed by the card's term
+        let starred = new Set();
+        let starredOnly = false;
+        let starKey = "";
+
+        function loadStars(set) {
+            starKey = `ccn-starred:${set.dir}${set.file}`;
+            try { starred = new Set(JSON.parse(localStorage.getItem(starKey) || "[]")); }
+            catch { starred = new Set(); }
+        }
+        function saveStars() {
+            try { localStorage.setItem(starKey, JSON.stringify([...starred])); } catch { /* storage unavailable */ }
+        }
+
+        // Rebuilds the visible deck from the full deck: optionally only starred cards, optionally shuffled
+        function rebuildDeck() {
+            // Every starred card was unstarred mid-pass: fall back to the whole deck
+            if (starredOnly && !originalCards.some(c => starred.has(c.term))) starredOnly = false;
+            const base = starredOnly ? originalCards.filter(c => starred.has(c.term)) : [...originalCards];
+            cards = shuffled ? randomOrder(base.length).map(i => base[i]) : base;
+            document.getElementById("fc-slider").max = Math.max(1, cards.length);
+            updateStarUI();
+            showCard(0);
+        }
+
+        function toggleStarredOnly(checked) {
+            starredOnly = checked;
+            rebuildDeck();
+        }
+
+        // Unstarring a card while studying starred cards keeps it in the current pass;
+        // it drops out the next time the deck is rebuilt (shuffle, toggle, reload)
+        function toggleStar(e) {
+            if (e) e.stopPropagation(); // don't flip the card
+            const card = cards[cardIndex];
+            if (!card) return;
+            if (starred.has(card.term)) starred.delete(card.term); else starred.add(card.term);
+            saveStars();
+            updateStarUI();
+        }
+
+        function updateStarUI() {
+            const card = cards[cardIndex];
+            const on = !!card && starred.has(card.term);
+            document.querySelectorAll(".fc-star").forEach(btn => {
+                btn.setAttribute("aria-pressed", String(on));
+                btn.setAttribute("aria-label", on ? "Unstar this card" : "Star this card");
+                btn.title = on ? "Unstar this card (S)" : "Star this card (S)";
+            });
+            const count = originalCards.filter(c => starred.has(c.term)).length;
+            document.getElementById("fc-starred-count").innerText = count;
+            const box = document.getElementById("fc-starred-only");
+            box.checked = starredOnly;
+            // Can't switch into starred-only with nothing starred (but can always switch out)
+            box.disabled = !starredOnly && count === 0;
+            document.getElementById("fc-starred-label").classList.toggle("opacity-50", box.disabled);
+            document.getElementById("fc-starred-label").title = box.disabled ? "Star some cards first" : "";
+            if (mode === "flashcards") {
+                document.getElementById("score-display").innerText =
+                    `${originalCards.length} cards` + (count ? ` • ${count} ★` : "");
+            }
+        }
+        // ---------- End starred cards ----------
+
         function parseFlashcards(text) {
             return text.split(/\r?\n/)
                 .map(line => line.trim())
@@ -272,6 +365,9 @@
             shuffled = false;
             updateShuffleButton();
             const flash = newMode === "flashcards";
+            // Lock page scrolling while studying flashcards
+            document.documentElement.classList.toggle("fc-mode", flash);
+            if (flash) window.scrollTo(0, 0);
             document.getElementById("flashcard-view").classList.toggle("hidden", !flash);
             document.getElementById("quiz-card").classList.toggle("hidden", flash);
             document.getElementById("nav-panel").classList.toggle("hidden", flash);
@@ -289,9 +385,9 @@
                     definition: `${set.dir}${set.file}: ${err.message}. Serve this folder with a local web server (e.g. python -m http.server).` }];
             }
             originalCards = [...cards];
-            document.getElementById("fc-slider").max = cards.length;
-            document.getElementById("score-display").innerText = `${cards.length} cards`;
-            showCard(0);
+            loadStars(set);
+            starredOnly = false;
+            rebuildDeck();
         }
 
         function showCard(index) {
@@ -313,6 +409,7 @@
             document.getElementById("fc-slider").value = cardIndex + 1;
             document.getElementById("fc-prev").disabled = cardIndex === 0;
             document.getElementById("fc-next").disabled = cardIndex === cards.length - 1;
+            updateStarUI();
         }
 
         function flipCard() { document.getElementById("fc-card").classList.toggle("flipped"); }
@@ -394,8 +491,10 @@
                     if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) return;
                     dragging = true;
                 }
+                // Once it's a sideways drag, keep the browser from also moving anything vertically
+                if (e.cancelable) e.preventDefault();
                 if (!reduceMotion.matches) sceneEl().style.transform = dragTransform(dx);
-            }, { passive: true });
+            }, { passive: false });
             const end = e => {
                 if (!touchStart) return;
                 const t = e.changedTouches[0];
@@ -434,7 +533,12 @@
             if (["textarea", "select", "input"].includes(tag) && e.target.type !== "range" && e.target.type !== "checkbox") return;
             if (e.key === "ArrowRight") { e.preventDefault(); nextCard(); }
             else if (e.key === "ArrowLeft") { e.preventDefault(); prevCard(); }
-            else if (e.key === " " || e.key === "Enter" || e.key === "ArrowUp") { e.preventDefault(); flipCard(); }
+            else if (e.key === " " || e.key === "Enter" || e.key === "ArrowUp") {
+                // Let Space/Enter activate a focused button (e.g. the star) instead of flipping
+                if (tag === "button" && e.key !== "ArrowUp") return;
+                e.preventDefault(); flipCard();
+            }
+            else if ((e.key === "s" || e.key === "S") && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); toggleStar(); }
         });
         // ---------- End flashcards ----------
         let DATA_DIR = QUIZ_SETS[0].dir;
