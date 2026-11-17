@@ -13,33 +13,45 @@
   },
   {
     "id": 2,
-    "type": "multiple_choice",
-    "question": "Consider the network shown below. Suppose AS1, AS2, AS3, and AS4 are running OSPF for their intra-AS routing protocol. Suppose eBGP and iBGP are used for the inter-AS routing protocol. Initially suppose there is no link between AS2 and AS4. Indicate the protocol by which a router learns about the network prefix x, which is attached to AS4.\n\n(1) Router 3c learns about prefix x from which protocol?\n(2) Router 3a learns about prefix x from which protocol?",
+    "type": "matching",
+    "question": "Consider the network shown below. Suppose AS1, AS2, AS3, and AS4 are running OSPF for their intra-AS routing protocol. Suppose eBGP and iBGP are used for the inter-AS routing protocol. Initially suppose there is no link between AS2 and AS4. Match each router to the protocol by which it learns about the network prefix x, which is attached to AS4.",
     "images": [
       "ebgp_ibgp_ospf.jpg"
     ],
     "figure": "Four autonomous systems. AS3 router 3c connects to AS4 router 4c; AS3 router 3a connects to AS1 router 1c; AS1 router 1b connects to AS2 router 2a; a dotted (initially absent) link joins 4a and 2a. Prefix x is attached to router 4a in AS4.",
-    "options": {
-      "A": "(1) eBGP, (2) iBGP",
-      "B": "(1) iBGP, (2) eBGP",
-      "C": "(1) eBGP, (2) eBGP",
-      "D": "(1) OSPF, (2) iBGP"
-    },
-    "answer": "A",
+    "prompts": [
+      "Router 3c learns about prefix x from which protocol?",
+      "Router 3a learns about prefix x from which protocol?"
+    ],
+    "choices": [
+      "eBGP",
+      "iBGP",
+      "OSPF",
+      "RIP"
+    ],
+    "answer": [
+      "eBGP",
+      "iBGP"
+    ],
     "explanation": "Router 3c is a gateway router with a direct eBGP session to 4c in AS4, so it learns about x from eBGP. Router 3a is inside AS3 relative to that session; 3c propagates the route to the other AS3 routers (including 3a) over iBGP. OSPF is only used to compute intra-AS paths, not to learn about external prefixes.",
     "hint": "eBGP runs between routers in different ASes; iBGP distributes externally learned routes to routers inside the same AS."
   },
   {
     "id": 3,
-    "type": "multiple_choice",
-    "question": "Match the name of the approach towards implementing a control plane with a description of how this approach works.\n\n(1) Per-router control plane\n(2) Software-defined networking (SDN)\n\nDescriptions:\n(X) Individual routing algorithm components, one operating in each and every router, interact with each other in the control plane. The routing algorithm component executing in a given router computes the local forwarding table for that router.\n(Y) A (typically) remote controller gathers information from routers, and then computes and installs the forwarding tables in routers.",
-    "options": {
-      "A": "(1) X, (2) Y",
-      "B": "(1) Y, (2) X",
-      "C": "(1) X, (2) X",
-      "D": "(1) Y, (2) Y"
-    },
-    "answer": "A",
+    "type": "matching",
+    "question": "Match the name of the approach towards implementing a control plane with a description of how this approach works.",
+    "prompts": [
+      "Per-router control plane",
+      "Software-defined networking (SDN)"
+    ],
+    "choices": [
+      "Individual routing algorithm components, one operating in each and every router, interact with each other in the control plane. The routing algorithm component executing in a given router computes the local forwarding table for that router.",
+      "A (typically) remote controller gathers information from routers, and then computes and installs the forwarding tables in routers."
+    ],
+    "answer": [
+      "Individual routing algorithm components, one operating in each and every router, interact with each other in the control plane. The routing algorithm component executing in a given router computes the local forwarding table for that router.",
+      "A (typically) remote controller gathers information from routers, and then computes and installs the forwarding tables in routers."
+    ],
     "explanation": "In the traditional per-router approach, every router runs its own routing algorithm component and computes its own forwarding table by interacting with the other routers. In SDN, a logically centralized (usually remote) controller collects state from the routers, computes the forwarding tables, and installs them in the routers.",
     "hint": "Which approach has a logically centralized controller?"
   },

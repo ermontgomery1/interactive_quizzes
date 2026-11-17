@@ -38,19 +38,19 @@ Link-layer link	Communication channel that connects adjacent nodes along an end-
 Link-layer frame	Link-layer protocol data unit consisting of header fields and a data field that encapsulates a network-layer datagram for transmission over a single link.
 Framing	Link-layer service that encapsulates each network-layer datagram within a link-layer frame before transmission over a link.
 Medium access control	MAC protocol specifying the rules by which a frame is transmitted onto a link, especially to coordinate access on shared broadcast channels.
-Network adapter (NIC)	Hardware interface card or motherboard chip containing the link-layer controller that implements framing, link access, and error detection.
+Network Interface Card (NIC) or Network Adapter	Hardware interface card or motherboard chip containing the link-layer controller that implements framing, link access, and error detection.
 Link-layer controller	Special-purpose hardware chip at the heart of a network adapter that implements core link-layer services.
 Error-detection bits	Extra bits (EDC) appended to data by a sending node to allow the receiving node to detect and sometimes correct in-transit bit flips.
 Single parity bit	Simple error-detection scheme adding one bit so the total number of 1s is even or odd, detecting any odd number of bit errors.
 Two-dimensional parity	Parity scheme arranging bits into rows and columns with parity bits for each, enabling detection and correction of any single-bit error.
-Cyclic redundancy check	CRC, a polynomial-code error-detection technique using modulo-2 division by an agreed generator bit pattern G, widely implemented in link-layer hardware.
+Cyclic redundancy check (CRC)	A polynomial-code error-detection technique using modulo-2 division by an agreed generator bit pattern G, widely implemented in link-layer hardware.
 CRC generator	Agreed (r+1)-bit pattern G with a leftmost 1 bit used by sender and receiver in modulo-2 division to compute and verify CRC bits.
 Broadcast link	Shared communication channel where multiple sending and receiving nodes are connected and any transmitted frame is received by all other nodes.
 Multiple access problem	Challenge of coordinating transmissions of multiple sending and receiving nodes sharing a single broadcast channel to prevent collisions.
 Frame collision	Event occurring when two or more nodes transmit simultaneously on a broadcast channel, tangling their signals so all colliding frames are lost.
 Channel partitioning protocol	Multiple access protocol class (such as TDM, FDM, and CDMA) that divides channel bandwidth into dedicated time slots, frequencies, or codes.
-Time-division multiplexing	TDM, a channel partitioning technique that divides time into frames and slots, assigning each node a dedicated time slot to transmit without collisions.
-Frequency-division multiplexing	FDM, a channel partitioning technique that divides a channel's bandwidth into smaller frequency bands and assigns one to each node.
+Time-division multiplexing (TDM)	A channel partitioning technique that divides time into frames and slots, assigning each node a dedicated time slot to transmit without collisions.
+Frequency-division multiplexing (FDM)	A channel partitioning technique that divides a channel's bandwidth into smaller frequency bands and assigns one to each node.
 Random access protocol	Multiple access protocol class (such as ALOHA and CSMA) where nodes transmit at full channel rate and wait random delays after collisions.
 Slotted ALOHA	Synchronized random access protocol where nodes transmit fixed-size frames only at slot beginnings, achieving a maximum efficiency of 1/e (0.37).
 Pure ALOHA	Unslotted, decentralized random access protocol where nodes transmit frames immediately upon arrival, achieving a maximum efficiency of 1/(2e) (0.18).

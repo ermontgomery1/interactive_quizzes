@@ -48,7 +48,11 @@
   {
     "id": 4,
     "type": "short_answer",
-    "question": "Exactly one data bit flipped in this received block. Each full row and column uses even parity. The rightmost column and bottom row contain the parity bits.\n\n        C1  C2  C3  C4 | Row parity\nR1       1   0   1   1 | 1\nR2       0   1   1   1 | 0\nR3       1   1   0   0 | 0\nColumn   0   0   0   1 | 1\nparity\n\nThe bit that flipped is at (row, column) ____ ; Corrected four-bit data row should be ____.",
+    "question": "Exactly one data bit flipped in this received block. Each full row and column uses even parity. The rightmost column and bottom row contain the parity bits.\n\nThe bit that flipped is at (row, column) ____ ; Corrected four-bit data row should be ____.",
+    "images": [
+      "parity_table.png"
+    ],
+    "figure": "Two-dimensional parity table",
     "answer": "The flipped bit is at (2, 4); the corrected row R2 is 0110.",
     "keywords": [
       "(2,4)",

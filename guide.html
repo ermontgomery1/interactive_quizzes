@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import File Guide</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="no-referrer">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        h2 { scroll-margin-top: 1rem; }
+        pre { white-space: pre; overflow-x: auto; }
+        code { font-size: 0.875em; }
+        .prose-p p + p { margin-top: 0.75rem; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-full">
+    <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 md:px-6 md:py-4">
+        <div class="max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-base shrink-0">CCN</div>
+                <div class="min-w-0">
+                    <h1 class="text-base sm:text-xl font-bold tracking-tight text-slate-100">Making your own quizzes and flashcards</h1>
+                    <p class="text-xs text-slate-400">File format guide for importing sets</p>
+                </div>
+            </div>
+            <a href="index.html" class="bg-slate-700 hover:bg-slate-600 text-sm px-3 py-2 rounded-md font-medium">&larr; Back to studying</a>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-6 md:py-10 space-y-10 leading-relaxed">
+
+        <nav class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">On this page</div>
+            <ol class="list-decimal pl-5 space-y-1 text-indigo-300">
+                <li><a class="hover:underline" href="#import">Importing a set</a></li>
+                <li><a class="hover:underline" href="#flashcards">Flashcard decks (.txt)</a></li>
+                <li><a class="hover:underline" href="#quizzes">Quizzes (questions.json)</a></li>
+                <li><a class="hover:underline" href="#types">The three question types</a>
+                    <ul class="list-disc pl-5 mt-1"><li><a class="hover:underline" href="#shuffle">Shuffled answers</a></li></ul>
+                </li>
+                <li><a class="hover:underline" href="#images">Images and figures</a></li>
+                <li><a class="hover:underline" href="#json">Writing JSON without errors</a></li>
+                <li><a class="hover:underline" href="#storage">Where imported sets are kept</a></li>
+            </ol>
+        </nav>
+
+        <section class="space-y-3 prose-p">
+            <p>You can study your own material with the same quiz and flashcard tools as the built-in sets. A <strong>flashcard deck</strong> is a plain text file. A <strong>quiz</strong> is a folder with a <code class="text-indigo-300">questions.json</code> file and any images its questions use.</p>
+            <p>The built-in sets use exactly these formats, so they make good templates. Open them to see a complete example:</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><a class="text-indigo-300 hover:underline" href="flashcards/flashcards.txt" target="_blank">flashcards/flashcards.txt</a>: a 77-card deck</li>
+                <li><a class="text-indigo-300 hover:underline" href="quiz5/questions.json" target="_blank">quiz5/questions.json</a>: a quiz that uses all three question types and images</li>
+                <li><a class="text-indigo-300 hover:underline" href="quiz7/questions.json" target="_blank">quiz7/questions.json</a> and <a class="text-indigo-300 hover:underline" href="quiz6/questions.json" target="_blank">quiz6/questions.json</a>: more examples</li>
+            </ul>
+        </section>
+
+        <!-- 1 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="import" class="text-xl font-semibold text-slate-100">1. Importing a set</h2>
+            <p>In the set dropdown at the top of the page, choose <strong>+ Import or manage your own sets…</strong>. Then do one of these:</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Choose folder:</strong> pick a quiz folder, or a folder holding several quiz folders and decks. Everything inside is imported in one go.</li>
+                <li><strong>Choose files:</strong> select <code class="text-indigo-300">questions.json</code> and its images together, or a single <code class="text-indigo-300">.txt</code> deck. Use this on iPhone and iPad, where folders can't be picked.</li>
+                <li><strong>Drag and drop:</strong> on a computer, drop folders or files anywhere on the page.</li>
+            </ul>
+            <p>Each set is checked before it's saved. If something is wrong, you'll see which question or line has the problem and what's expected, and that set isn't imported. Fix the file and import it again. Yellow notes are warnings: the set was imported, but something may not look the way you meant.</p>
+            <p>Your imported sets appear in the dropdown under <strong>Imported (this browser)</strong>.</p>
+            <div class="overflow-x-auto">
+            <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300"><span class="text-slate-500">An example folder to import (names on the left become set names):</span>
+my-study-sets/
+├── week8-routing/            <span class="text-slate-500">← quiz named "week8-routing"</span>
+│   ├── questions.json
+│   ├── topology.png
+│   └── bgp policy.jpg
+├── week9-mac/                <span class="text-slate-500">← another quiz</span>
+│   └── questions.json
+└── key-terms.txt             <span class="text-slate-500">← flashcard deck named "key-terms"</span></pre>
+            </div>
+        </section>
+
+        <!-- 2 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="flashcards" class="text-xl font-semibold text-slate-100">2. Flashcard decks (.txt)</h2>
+            <p>One card per line: the <strong>term</strong>, a single <strong>Tab</strong> character, then the <strong>definition</strong>. The file name (without <code class="text-indigo-300">.txt</code>) becomes the deck name. <code class="text-indigo-300">.tsv</code> files work too.</p>
+            <div class="overflow-x-auto">
+            <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">Forwarding table<span class="text-amber-400">→</span>Table used in destination-based forwarding that specifies a router's local data-plane forwarding behavior based on destination IP addresses.
+Per-router control<span class="text-amber-400">→</span>Control plane approach where a routing algorithm runs in every router and routing components interact with each other to compute forwarding tables.
+Logically centralized control<span class="text-amber-400">→</span>Control plane approach where a distinct remote controller computes and distributes forwarding or flow tables to local control agents in routers.</pre>
+            </div>
+            <p class="text-sm text-slate-400">The first three cards of <a class="text-indigo-300 hover:underline" href="flashcards/flashcards.txt" target="_blank">flashcards.txt</a>. <span class="text-amber-400">→</span> marks the Tab; in the real file it's an invisible Tab character.</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Only the <strong>first</strong> Tab on a line splits term from definition.</li>
+                <li>Blank lines are fine. A line without a Tab is skipped, and the import tells you its line number.</li>
+                <li>Stars are remembered by term, so give each card a different term.</li>
+                <li>Cards are shown as plain text. Math notation isn't rendered on flashcards.</li>
+            </ul>
+            <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-lg p-4 text-sm space-y-2">
+                <p class="font-semibold text-indigo-200">Easiest way to make one: use a spreadsheet</p>
+                <p>Put terms in column A and definitions in column B. Select both columns, copy, paste into a plain text editor (Notepad, TextEdit in plain-text mode, VS Code), and save as a <code class="text-indigo-300">.txt</code> file with UTF-8 encoding. Copied spreadsheet cells are already separated by Tabs. In Google Sheets you can also use <em>File → Download → Tab-separated values (.tsv)</em>.</p>
+                <p>Some editors turn the Tab key into spaces. If an import says no cards were found, that's the usual reason.</p>
+            </div>
+        </section>
+
+        <!-- 3 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="quizzes" class="text-xl font-semibold text-slate-100">3. Quizzes (questions.json)</h2>
+            <p>The file must be named exactly <code class="text-indigo-300">questions.json</code>. It contains a list of questions inside square brackets, separated by commas:</p>
+            <div class="overflow-x-auto">
+            <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">[
+  { "id": 1, "type": "multiple_choice", ... },
+  { "id": 2, "type": "matching", ... },
+  { "id": 3, "type": "short_answer", ... }
+]</pre>
+            </div>
+            <p>The quiz is named after its folder. To give it a different name, wrap the list in an object with a <code class="text-indigo-300">title</code>. If you import with <em>Choose files</em> (for example on an iPhone), there's no folder name, so add a title:</p>
+            <div class="overflow-x-auto">
+            <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">{
+  "title": "Week 8: Routing",
+  "questions": [
+    { "id": 1, ... },
+    { "id": 2, ... }
+  ]
+}</pre>
+            </div>
+            <p>Importing a quiz with the same name again replaces the earlier copy, which makes fixing mistakes easy.</p>
+
+            <h3 class="text-base font-semibold text-slate-100 pt-2">Fields every question can have</h3>
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="text-left text-slate-400 border-b border-slate-700"><th class="py-2 pr-4">Field</th><th class="py-2 pr-4">Required?</th><th class="py-2">What it does</th></tr></thead>
+                <tbody class="align-top">
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">id</code></td><td class="py-2 pr-4">Yes</td><td class="py-2">A number, different for every question. Unshuffle puts questions back in id order, so number them in the order you want.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">type</code></td><td class="py-2 pr-4">Yes</td><td class="py-2"><code>"multiple_choice"</code>, <code>"matching"</code> or <code>"short_answer"</code>.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">question</code></td><td class="py-2 pr-4">Yes</td><td class="py-2">The question text. Use <code>\n</code> for a line break.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">answer</code></td><td class="py-2 pr-4">Yes</td><td class="py-2">Depends on the type (see below).</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">explanation</code></td><td class="py-2 pr-4">No</td><td class="py-2">Shown after the question is submitted, right or wrong.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">hint</code></td><td class="py-2 pr-4">No</td><td class="py-2">Shown when Show Hint is pressed. Without one, the button is hidden.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">images</code></td><td class="py-2 pr-4">No</td><td class="py-2">A list of image file names shown under the question. See <a class="text-indigo-300 hover:underline" href="#images">Images</a>.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">figure</code></td><td class="py-2 pr-4">No</td><td class="py-2">A text description of the figure. Used as the image's alt text, or shown as text when there's no image.</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4"><code class="text-indigo-300">lecture</code></td><td class="py-2 pr-4">No</td><td class="py-2">A short label (like <code>"Lecture 12"</code>) shown next to the question type.</td></tr>
+                    <tr><td class="py-2 pr-4"><code class="text-indigo-300">fixed_order</code></td><td class="py-2 pr-4">No</td><td class="py-2"><code>true</code> keeps this question's options in the written order even when <strong>Shuffle answers</strong> is on. Use it when the explanation or the choices refer to options by letter. See <a class="text-indigo-300 hover:underline" href="#shuffle">Shuffled answers</a>.</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p class="text-sm text-slate-400">Question text, options, hints and explanations can include math between <code>$...$</code> (inline) or <code>$$...$$</code> (on its own line), written in LaTeX. Inside JSON every backslash is doubled, so <code>\min</code> is written <code>\\min</code>.</p>
+        </section>
+
+        <!-- 4 -->
+        <section class="space-y-6 prose-p">
+            <h2 id="types" class="text-xl font-semibold text-slate-100">4. The three question types</h2>
+
+            <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-slate-100">Multiple choice</h3>
+                <p><code class="text-indigo-300">options</code> maps a letter to each choice. <code class="text-indigo-300">answer</code> is the letter of the correct choice. From quiz 5, question 1:</p>
+                <div class="overflow-x-auto">
+                <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">{
+  "id": 1,
+  "type": "multiple_choice",
+  "question": "True or False: With distance vector algorithm, a router learns the cost to other routers from a global topology map obtained through an iterative process of computation and exchanging info with neighbors.",
+  "options": {
+    "A": "True",
+    "B": "False"
+  },
+  "answer": "B",
+  "explanation": "Distance vector is a decentralized algorithm: a router never has a global topology map. ...",
+  "hint": "Which routing algorithm class gives every router the complete topology, and which one only uses information from neighbors?"
+}</pre>
+                </div>
+                <p><strong>Select all that apply:</strong> make <code class="text-indigo-300">answer</code> a list of letters. Checkboxes replace the round buttons, and the question counts as correct only if exactly those choices are ticked. From quiz 5, question 5:</p>
+                <div class="overflow-x-auto">
+                <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">{
+  "id": 5,
+  "type": "multiple_choice",
+  "question": "Consider the OSPF routing protocol. Which of the following characteristics are associated with OSPF (as opposed to BGP)? Select all that apply.",
+  "options": {
+    "A": "Is an inter-domain routing protocol.",
+    "B": "Is an intra-domain routing protocol.",
+    "C": "Policy, rather than performance (e.g., least cost path), determines paths that are used.",
+    "D": "Finds a least cost path from source to destination within a domain.",
+    "E": "Floods link state control information."
+  },
+  "answer": ["B", "D", "E"],
+  "explanation": "OSPF is an intra-domain (intra-AS) link-state protocol: ...",
+  "hint": "OSPF runs inside a single AS and is a link-state protocol. BGP runs between ASes and is policy-driven."
+}</pre>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-slate-100">Matching</h3>
+                <p>Each item in <code class="text-indigo-300">prompts</code> gets a dropdown listing the <code class="text-indigo-300">choices</code>. <code class="text-indigo-300">answer</code> lists the correct choice for each prompt, <strong>in the same order as the prompts</strong>, and each answer must be spelled exactly like one of the choices. Choices can be used more than once, and you can add extra wrong choices. If you leave out <code class="text-indigo-300">choices</code>, the dropdown lists the answers. From quiz 5, question 2:</p>
+                <div class="overflow-x-auto">
+                <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">{
+  "id": 2,
+  "type": "matching",
+  "question": "Consider the network shown below. ... Match each router to the protocol by which it learns about the network prefix x, which is attached to AS4.",
+  "images": ["ebgp_ibgp_ospf.jpg"],
+  "figure": "Four autonomous systems. AS3 router 3c connects to AS4 router 4c; ...",
+  "prompts": [
+    "Router 3c learns about prefix x from which protocol?",
+    "Router 3a learns about prefix x from which protocol?"
+  ],
+  "choices": ["eBGP", "iBGP", "OSPF", "RIP"],
+  "answer": ["eBGP", "iBGP"],
+  "explanation": "Router 3c is a gateway router with a direct eBGP session to 4c in AS4, ...",
+  "hint": "eBGP runs between routers in different ASes; iBGP distributes externally learned routes to routers inside the same AS."
+}</pre>
+                </div>
+                <p>The question counts as correct only if every prompt is matched correctly. Keep choices short; long ones get cramped in the dropdown, especially on phones.</p>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="text-lg font-semibold text-slate-100">Short answer</h3>
+                <p>The student types an answer, which is checked against <code class="text-indigo-300">keywords</code>. <code class="text-indigo-300">answer</code> is a model answer, shown after submitting. From quiz 5, question 4:</p>
+                <div class="overflow-x-auto">
+                <pre class="bg-slate-950 border border-slate-700 rounded-lg p-4 text-sm text-slate-300">{
+  "id": 4,
+  "type": "short_answer",
+  "question": "Router X has only the three neighbors listed below and has no direct link to destination Z. ... Compute X's new route to Z.\n\nX's next hop is ____ and its distance to Z is ____.",
+  "images": ["P6-Table Fig.jpg"],
+  "figure": "Neighbor A: cost from X = 2, advertised distance to Z = 7. ...",
+  "answer": "Next hop B, distance 7.",
+  "keywords": ["B", "7"],
+  "explanation": "Apply the Bellman-Ford equation $D_X(Z) = \\min_v \\{c(X,v) + D_v(Z)\\}$. Via A: $2 + 7 = 9$. Via B: $5 + 2 = 7$. Via C: $1 + 9 = 10$. The minimum is 7, through neighbor B.",
+  "hint": "For each neighbor, add the cost to reach that neighbor to the distance it advertises, then take the minimum."
+}</pre>
+                </div>
+                <div class="bg-amber-950/30 border border-amber-600/30 rounded-lg p-4 text-sm text-amber-200 space-y-2">
+                    <p class="font-semibold">How short answers are graded</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>An answer is marked correct if it contains <strong>at least one</strong> of the keywords (ignoring capitals), or if it matches a keyword exactly. In the example above, an answer containing just "B" counts as correct.</li>
+                        <li>Keywords of one or two characters, like <code>"B"</code> or <code>"7"</code>, must stand alone, so "7" doesn't match inside "17" and "b" doesn't match inside "bgp". Longer keywords match anywhere, even inside a longer word.</li>
+                        <li>List the different ways a student might write the same thing, for example <code>["(2,4)", "(2, 4)", "R2C4"]</code>.</li>
+                    </ul>
+                    <p>Because one keyword is enough, short answer suits questions with one key fact. Split a question with several required parts into separate questions, or use matching instead.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-3 prose-p">
+            <h3 id="shuffle" class="text-lg font-semibold text-slate-100" style="scroll-margin-top: 1rem">Shuffled answers</h3>
+            <p>When <strong>Shuffle answers</strong> is turned on, multiple choice options and matching dropdown choices are shown in a random order. Options are relabelled A, B, C… from the top, so the letters a student sees may differ from the ones in your file. Grading still uses your <code class="text-indigo-300">answer</code>, so you don't need to change anything.</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>A True/False pair always shows True first.</li>
+                <li>Options like "All of the above" or "None of the above" stay at the bottom.</li>
+                <li>Because letters change, an explanation such as "(B) is correct" could point at the wrong option. Add <code class="text-indigo-300">"fixed_order": true</code> to those questions, or describe options by their content instead. Quiz 7, questions 3 and 7, use <code>fixed_order</code> for this reason.</li>
+            </ul>
+        </section>
+
+        <!-- 5 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="images" class="text-xl font-semibold text-slate-100">5. Images and figures</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Put image files in the same folder as <code class="text-indigo-300">questions.json</code> (a folder inside it works too, e.g. <code>"images": ["figs/topology.png"]</code>).</li>
+                <li>List them by file name in <code class="text-indigo-300">images</code>. Spaces in names are fine (<code>"P6-Table Fig.jpg"</code>). For imports, capitals don't matter.</li>
+                <li>Supported types: PNG, JPG/JPEG, GIF, WebP, BMP, AVIF and SVG.</li>
+                <li>Include the images when importing. With <em>Choose files</em>, select them along with <code class="text-indigo-300">questions.json</code>. If a listed image is missing, the import tells you which one.</li>
+                <li>Images no question uses aren't saved, so they don't take up storage.</li>
+                <li>Always add a <code class="text-indigo-300">figure</code> description too. It helps screen-reader users and appears if the image can't be shown.</li>
+            </ul>
+        </section>
+
+        <!-- 6 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="json" class="text-xl font-semibold text-slate-100">6. Writing JSON without errors</h2>
+            <p>JSON is strict. Most import errors come from one of these:</p>
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="text-left text-slate-400 border-b border-slate-700"><th class="py-2 pr-4">Rule</th><th class="py-2 pr-4">Wrong</th><th class="py-2">Right</th></tr></thead>
+                <tbody class="align-top font-mono text-xs">
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4 font-sans text-sm">Commas between items, but none after the last one</td><td class="py-2 pr-4 text-rose-300">"A": "True",<br>"B": "False",<br>}</td><td class="py-2 text-emerald-300">"A": "True",<br>"B": "False"<br>}</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4 font-sans text-sm">Double quotes only, around every name and text</td><td class="py-2 pr-4 text-rose-300">{ id: 1, 'type': 'matching' }</td><td class="py-2 text-emerald-300">{ "id": 1, "type": "matching" }</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4 font-sans text-sm">A " inside text needs a backslash</td><td class="py-2 pr-4 text-rose-300">"the "best" path"</td><td class="py-2 text-emerald-300">"the \"best\" path"</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4 font-sans text-sm">Backslashes are doubled</td><td class="py-2 pr-4 text-rose-300">"$\min_v$"</td><td class="py-2 text-emerald-300">"$\\min_v$"</td></tr>
+                    <tr class="border-b border-slate-800"><td class="py-2 pr-4 font-sans text-sm">Line breaks inside text are written as \n</td><td class="py-2 pr-4 text-rose-300">"First line<br>second line"</td><td class="py-2 text-emerald-300">"First line\nsecond line"</td></tr>
+                    <tr><td class="py-2 pr-4 font-sans text-sm">Numbers for id, without quotes</td><td class="py-2 pr-4 text-rose-300">"id": "3"</td><td class="py-2 text-emerald-300">"id": 3</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p>When a file isn't valid JSON, the import shows the line and column where reading stopped. The real mistake is usually just before that point, often a missing comma at the end of the previous line. Curly “smart quotes” pasted from a word processor also cause this; replace them with straight quotes.</p>
+            <p>A code editor such as VS Code highlights these mistakes as you type. The easiest start is to copy one of the built-in <code class="text-indigo-300">questions.json</code> files and edit it.</p>
+        </section>
+
+        <!-- 7 -->
+        <section class="space-y-3 prose-p">
+            <h2 id="storage" class="text-xl font-semibold text-slate-100">7. Where imported sets are kept</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Imported sets are saved <strong>in your browser on this device only</strong>. Nothing is uploaded anywhere, and nobody else can see them.</li>
+                <li>They don't sync between devices or browsers. To study on another device, import the files there too.</li>
+                <li>Clearing this site's data (cookies and site data) deletes them, and so does a private or incognito window when it closes. Keep your original files.</li>
+                <li>To update a set, edit your files and import again with the same folder name or <code class="text-indigo-300">title</code>. To delete one, use <strong>Remove</strong> in the import dialog.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 px-4 text-xs text-slate-500 border-t border-slate-800">
+        <a href="index.html" class="text-indigo-400 hover:underline">Back to the quizzes and flashcards</a>
+    </footer>
+</body>
+</html>

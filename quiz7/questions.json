@@ -59,6 +59,7 @@
   {
     "id": 3,
     "type": "multiple_choice",
+    "fixed_order": true,
     "question": "Which of the following statements are true about a self learning switch? Select all that apply.",
     "options": {
       "A": "A self-learning switch never forgets a self-learned association of a MAC address x and switch port y.",
@@ -123,6 +124,7 @@
   {
     "id": 7,
     "type": "matching",
+    "fixed_order": true,
     "question": "Switches S1, S2 and S3 form a chain. H attaches to S1 and T to S3, both on VLAN 30 in one IPv4 subnet. The S1–S2 trunk carries VLANs 20 and 30. The S2–S3 trunk allows only VLAN 20 at both ends. All learning tables start empty. H sends one ARP request for T. The administrator then enables VLAN 30 on both ends of S2–S3. H retries and T replies. No other frames arrive.\n\nMatch each observation to the set of switches. A letter may be used more than once.",
     "images": [
       "vlan_switch_chain.jpg"
