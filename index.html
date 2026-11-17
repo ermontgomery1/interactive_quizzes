@@ -35,7 +35,11 @@
         .fc-card.flipped .fc-front-face { visibility: hidden; }
         @media (prefers-reduced-motion: reduce) { .fc-card, .fc-front-face, .fc-back { transition: none; } }
         /* Touch devices: no tap delay/double-tap zoom on controls, and show touch-specific hints */
-        button, select, label, input, .fc-card { touch-action: manipulation; }
+        button, select, label, input { touch-action: manipulation; }
+        /* The card handles horizontal swipes itself; vertical drags still scroll the page */
+        .fc-card { touch-action: pan-y; }
+        .fc-scene { will-change: transform; }
+        #flashcard-view { overflow-x: clip; }
         body { -webkit-tap-highlight-color: transparent; }
         .touch-only { display: none; }
         @media (hover: none) and (pointer: coarse) {
@@ -313,34 +317,111 @@
 
         function flipCard() { document.getElementById("fc-card").classList.toggle("flipped"); }
 
-        // Swipe left/right on the card to move between cards; a tap still flips it
+        // ---------- Slide animation between cards ----------
+        // The whole scene slides (not #fc-card itself, whose transform is used by the flip)
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const SLIDE_OUT = (dir, from) => [
+            { transform: from || "none", opacity: 1 },
+            { transform: `translateX(${-dir * 110}%) rotate(${-dir * 8}deg)`, opacity: 0 }
+        ];
+        const SLIDE_IN = dir => [
+            { transform: `translateX(${dir * 60}%) rotate(${dir * 5}deg) scale(0.92)`, opacity: 0 },
+            { transform: "none", opacity: 1 }
+        ];
+
+        function sceneEl() { return document.querySelector("#flashcard-view .fc-scene"); }
+
+        // dir: +1 = moving forward (old card leaves to the left), -1 = moving back
+        function slideToCard(index, dir, fromTransform) {
+            const scene = sceneEl();
+            if (reduceMotion.matches || !scene.animate) { scene.style.transform = ""; showCard(index); return; }
+            const busy = scene.getAnimations().length > 0;
+            scene.getAnimations().forEach(a => a.cancel());
+            const target = Math.max(0, Math.min(cards.length - 1, index));
+            cardIndex = target; // update now so rapid taps keep advancing
+
+            const slideIn = () => {
+                scene.style.transform = "";
+                showCard(target);
+                scene.animate(SLIDE_IN(dir), { duration: 280, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" });
+            };
+            // If a slide is already running, skip straight to bringing in the new card
+            if (busy && !fromTransform) { slideIn(); return; }
+
+            const out = scene.animate(SLIDE_OUT(dir, fromTransform), { duration: 180, easing: "ease-in", fill: "forwards" });
+            out.finished.then(() => { out.cancel(); slideIn(); }).catch(() => {});
+        }
+
+        // Card bounces back to the centre (end of a short drag, or swiping past the first/last card)
+        function snapBack(fromTransform) {
+            const scene = sceneEl();
+            scene.style.transform = "";
+            if (!fromTransform || reduceMotion.matches || !scene.animate) return;
+            scene.animate([{ transform: fromTransform }, { transform: "none" }],
+                { duration: 300, easing: "cubic-bezier(0.3, 1.4, 0.5, 1)" });
+        }
+
+        // Swipe left = next card, right = previous card; the card follows the finger while dragging.
+        // A tap (no real movement) still flips it.
         let touchStart = null;
+        let dragging = false;
         let swipedRecently = false;
         function onCardClick() {
             if (swipedRecently) { swipedRecently = false; return; }
             flipCard();
+        }
+        function dragTransform(dx) {
+            // Resist the drag when there's no card in that direction
+            const atEdge = (dx < 0 && cardIndex >= cards.length - 1) || (dx > 0 && cardIndex <= 0);
+            const x = atEdge ? dx * 0.25 : dx;
+            return `translateX(${x}px) rotate(${x / 25}deg)`;
         }
         (function setupSwipe() {
             const el = document.getElementById("fc-card");
             el.addEventListener("touchstart", e => {
                 const t = e.changedTouches[0];
                 touchStart = { x: t.clientX, y: t.clientY };
+                dragging = false;
+                sceneEl().getAnimations().forEach(a => a.finish());
             }, { passive: true });
-            el.addEventListener("touchend", e => {
+            el.addEventListener("touchmove", e => {
+                if (!touchStart) return;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - touchStart.x;
+                const dy = t.clientY - touchStart.y;
+                // Decide once whether this is a horizontal drag; vertical moves stay as scrolling
+                if (!dragging) {
+                    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) return;
+                    dragging = true;
+                }
+                if (!reduceMotion.matches) sceneEl().style.transform = dragTransform(dx);
+            }, { passive: true });
+            const end = e => {
                 if (!touchStart) return;
                 const t = e.changedTouches[0];
                 const dx = t.clientX - touchStart.x;
                 const dy = t.clientY - touchStart.y;
                 touchStart = null;
-                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                    swipedRecently = true;
-                    setTimeout(() => { swipedRecently = false; }, 400);
-                    if (dx < 0) nextCard(); else prevCard();
+                const current = sceneEl().style.transform;
+                if (!dragging) return;
+                dragging = false;
+                // Any real drag shouldn't also count as a tap-to-flip
+                swipedRecently = true;
+                setTimeout(() => { swipedRecently = false; }, 400);
+                const dir = dx < 0 ? 1 : -1;
+                const canMove = dir > 0 ? cardIndex < cards.length - 1 : cardIndex > 0;
+                if (e.type === "touchend" && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && canMove) {
+                    slideToCard(cardIndex + dir, dir, current);
+                } else {
+                    snapBack(current);
                 }
-            }, { passive: true });
+            };
+            el.addEventListener("touchend", end, { passive: true });
+            el.addEventListener("touchcancel", end, { passive: true });
         })();
-        function nextCard() { if (cardIndex < cards.length - 1) showCard(cardIndex + 1); }
-        function prevCard() { if (cardIndex > 0) showCard(cardIndex - 1); }
+        function nextCard() { if (cardIndex < cards.length - 1) slideToCard(cardIndex + 1, 1); }
+        function prevCard() { if (cardIndex > 0) slideToCard(cardIndex - 1, -1); }
+        // ---------- End slide animation ----------
 
         function toggleDefinitionFirst(checked) {
             definitionFirst = checked;
