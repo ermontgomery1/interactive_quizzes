@@ -34,31 +34,39 @@
         .fc-card.flipped .fc-back { visibility: visible; }
         .fc-card.flipped .fc-front-face { visibility: hidden; }
         @media (prefers-reduced-motion: reduce) { .fc-card, .fc-front-face, .fc-back { transition: none; } }
+        /* Touch devices: no tap delay/double-tap zoom on controls, and show touch-specific hints */
+        button, select, label, input, .fc-card { touch-action: manipulation; }
+        body { -webkit-tap-highlight-color: transparent; }
+        .touch-only { display: none; }
+        @media (hover: none) and (pointer: coarse) {
+            .touch-only { display: inline; }
+            .pointer-only { display: none; }
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 h-full flex flex-col">
+<body class="bg-slate-900 text-slate-100 min-h-full md:h-full flex flex-col">
     <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
-        <div class="flex items-center space-x-3">
-            <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-lg">CCN</div>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">Computer Comms and Networks</h1>
+    <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 md:px-6 md:py-4 flex flex-wrap justify-between items-center gap-3 shadow-md">
+        <div class="flex items-center space-x-3 min-w-0">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-base md:text-lg shrink-0">CCN</div>
+            <div class="min-w-0">
+                <h1 class="text-base sm:text-xl font-bold tracking-tight truncate">Computer Comms and Networks</h1>
                 <p class="text-xs text-slate-400">Interactive Quizzes and Flashcards</p>
             </div>
         </div>
-        <div class="flex items-center space-x-4">
-            <select id="set-select" onchange="switchSet(this.value)" class="bg-slate-900 border border-slate-700 text-sm rounded-md px-2 py-2 focus:outline-none focus:border-indigo-500"></select>
-            <div class="text-right">
-                <span id="score-display" class="text-lg font-semibold text-indigo-400">Score: 0 / 0</span>
+        <div class="flex flex-wrap items-center gap-2 md:gap-4 w-full md:w-auto">
+            <select id="set-select" onchange="switchSet(this.value)" aria-label="Choose a quiz or flashcard deck" class="w-full md:w-auto bg-slate-900 border border-slate-700 text-base md:text-sm rounded-md px-2 py-2 focus:outline-none focus:border-indigo-500"></select>
+            <div class="mr-auto md:mr-0 text-left md:text-right">
+                <span id="score-display" class="text-base md:text-lg font-semibold text-indigo-400">Score: 0 / 0</span>
                 <p class="text-xs text-slate-400" id="progress-text">Loading...</p>
             </div>
-            <button onclick="toggleShuffle()" id="shuffle-btn" aria-pressed="false" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-2 rounded-md transition font-medium" title="Randomize the order">Shuffle</button>
-            <button onclick="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-2 rounded-md transition font-medium">Restart</button>
+            <button onclick="toggleShuffle()" id="shuffle-btn" aria-pressed="false" class="bg-slate-700 hover:bg-slate-600 text-sm md:text-xs px-3 py-2.5 md:py-2 rounded-md transition font-medium" title="Randomize the order">Shuffle</button>
+            <button onclick="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-sm md:text-xs px-3 py-2.5 md:py-2 rounded-md transition font-medium">Restart</button>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 flex flex-col justify-between overflow-y-auto">
+    <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-4 md:p-6 flex flex-col justify-between md:overflow-y-auto">
         
         <!-- Progress Bar -->
         <div class="w-full bg-slate-800 rounded-full h-2.5 mb-6">
@@ -66,8 +74,8 @@
         </div>
 
         <!-- Question Card -->
-        <div id="quiz-card" class="bg-slate-800 border border-slate-700 rounded-xl p-6 md:p-8 shadow-xl mb-6">
-            <div class="flex justify-between items-start mb-4">
+        <div id="quiz-card" class="bg-slate-800 border border-slate-700 rounded-xl p-4 sm:p-6 md:p-8 shadow-xl mb-6 scroll-mt-3">
+            <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
                 <span id="question-badge" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold px-3 py-1 rounded-full">Question 1</span>
                 <span id="question-type-badge" class="text-xs text-slate-400 uppercase tracking-wider font-medium">Short Answer</span>
             </div>
@@ -92,7 +100,7 @@
             <!-- Text Input Container (for Short Answer) -->
             <div id="input-container" class="mb-6">
                 <label for="user-answer" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Your Answer:</label>
-                <textarea id="user-answer" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500 text-sm" placeholder="Type your answer or select the correct choice..."></textarea>
+                <textarea id="user-answer" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition placeholder-slate-500 text-base md:text-sm" placeholder="Type your answer or select the correct choice..."></textarea>
             </div>
 
             <!-- Hint Box -->
@@ -110,17 +118,17 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap justify-between items-center gap-4 pt-4 border-t border-slate-700/60">
-                <button onclick="toggleHint()" id="hint-btn" class="text-slate-400 hover:text-indigo-400 text-sm font-medium flex items-center space-x-1 transition">
+            <div class="flex flex-wrap justify-between items-center gap-3 sm:gap-4 pt-4 border-t border-slate-700/60">
+                <button onclick="toggleHint()" id="hint-btn" class="text-slate-400 hover:text-indigo-400 text-sm font-medium flex items-center space-x-1 py-2 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                     <span>Show Hint</span>
                 </button>
 
-                <div class="flex space-x-3">
-                    <button onclick="evaluateAnswer()" id="submit-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition shadow-lg shadow-indigo-600/20">
+                <div class="flex gap-3 w-full sm:w-auto">
+                    <button onclick="evaluateAnswer()" id="submit-btn" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition shadow-lg shadow-indigo-600/20">
                         Submit & Evaluate
                     </button>
-                    <button onclick="nextQuestion()" id="next-btn" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition shadow-lg shadow-emerald-600/20">
+                    <button onclick="nextQuestion()" id="next-btn" class="hidden flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition shadow-lg shadow-emerald-600/20">
                         Next Question &rarr;
                     </button>
                 </div>
@@ -130,36 +138,36 @@
         <!-- Flashcard View (shown instead of the quiz card when a flashcard deck is selected) -->
         <div id="flashcard-view" class="hidden mb-6">
             <div class="fc-scene">
-                <div id="fc-card" class="fc-card relative h-80 md:h-96 cursor-pointer select-none" onclick="flipCard()" title="Click or press Space to flip">
-                    <div class="fc-face fc-front-face absolute inset-0 bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-6 md:p-10 flex flex-col">
+                <div id="fc-card" class="fc-card relative h-[22rem] sm:h-80 md:h-96 cursor-pointer select-none" onclick="onCardClick()" title="Click or press Space to flip">
+                    <div class="fc-face fc-front-face absolute inset-0 bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
                         <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">Term</span>
-                        <div id="fc-front" class="flex-1 flex items-center justify-center text-center text-2xl md:text-3xl font-semibold text-slate-100 overflow-y-auto"></div>
-                        <span class="text-xs text-slate-500 text-center">Click or press Space to flip</span>
+                        <div id="fc-front" class="flex-1 flex items-center justify-center text-center text-xl sm:text-2xl md:text-3xl font-semibold text-slate-100 overflow-y-auto"></div>
+                        <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip</span><span class="touch-only">Tap to flip &bull; Swipe for next/previous</span></span>
                     </div>
-                    <div class="fc-face fc-back absolute inset-0 bg-indigo-950 border border-indigo-500/40 rounded-xl shadow-xl p-6 md:p-10 flex flex-col">
+                    <div class="fc-face fc-back absolute inset-0 bg-indigo-950 border border-indigo-500/40 rounded-xl shadow-xl p-5 sm:p-6 md:p-10 flex flex-col">
                         <span class="text-xs text-indigo-300 uppercase tracking-wider font-medium">Definition</span>
                         <div id="fc-back" class="flex-1 flex items-center justify-center text-center text-base md:text-lg leading-relaxed text-slate-100 overflow-y-auto"></div>
-                        <span class="text-xs text-slate-500 text-center">Click or press Space to flip back</span>
+                        <span class="text-xs text-slate-500 text-center"><span class="pointer-only">Click or press Space to flip back</span><span class="touch-only">Tap to flip back &bull; Swipe for next/previous</span></span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-4 mt-6">
-                <button onclick="prevCard()" id="fc-prev" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed px-5 py-2.5 rounded-lg font-medium text-sm transition">&larr; Previous</button>
-                <span id="fc-counter" class="text-sm text-slate-400 font-medium">Card 1 of 1</span>
-                <button onclick="nextCard()" id="fc-next" class="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium text-sm transition">Next &rarr;</button>
+            <div class="flex items-center justify-between gap-2 sm:gap-4 mt-4 sm:mt-6">
+                <button onclick="prevCard()" id="fc-prev" class="bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed px-4 sm:px-5 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition">&larr; <span class="hidden sm:inline">Previous</span><span class="sm:hidden">Prev</span></button>
+                <span id="fc-counter" class="text-sm text-slate-400 font-medium text-center">Card 1 of 1</span>
+                <button onclick="nextCard()" id="fc-next" class="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 sm:px-5 py-3 sm:py-2.5 rounded-lg font-medium text-sm transition">Next &rarr;</button>
             </div>
 
-            <div class="mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3">
-                <div class="flex justify-between items-center">
+            <div class="mt-4 sm:mt-6 bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col space-y-3">
+                <div class="flex flex-wrap justify-between items-center gap-2">
                     <label for="fc-slider" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jump to Card</label>
-                    <label class="flex items-center space-x-2 text-xs text-slate-400 cursor-pointer">
-                        <input type="checkbox" id="fc-def-first" onchange="toggleDefinitionFirst(this.checked)" class="bg-slate-900 border-slate-700">
+                    <label class="flex items-center space-x-2 text-sm sm:text-xs text-slate-400 cursor-pointer py-1">
+                        <input type="checkbox" id="fc-def-first" onchange="toggleDefinitionFirst(this.checked)" class="w-4 h-4 bg-slate-900 border-slate-700">
                         <span>Show definition first</span>
                     </label>
                 </div>
-                <input type="range" id="fc-slider" min="1" max="1" value="1" oninput="showCard(this.value - 1)" class="w-full accent-indigo-500">
-                <p class="text-xs text-slate-500">Keyboard: &larr; / &rarr; to move, Space or &uarr; to flip.</p>
+                <input type="range" id="fc-slider" min="1" max="1" value="1" oninput="showCard(this.value - 1)" class="w-full h-6 accent-indigo-500">
+                <p class="text-xs text-slate-500 pointer-only">Keyboard: &larr; / &rarr; to move, Space or &uarr; to flip.</p>
             </div>
         </div>
 
@@ -172,7 +180,7 @@
         </div>
     </main>
 
-    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800">
+    <footer class="text-center py-4 px-4 text-xs text-slate-500 border-t border-slate-800" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
         Computer Comms and Networks &bull; Powered by Interactive Evaluation
     </footer>
 
@@ -304,6 +312,33 @@
         }
 
         function flipCard() { document.getElementById("fc-card").classList.toggle("flipped"); }
+
+        // Swipe left/right on the card to move between cards; a tap still flips it
+        let touchStart = null;
+        let swipedRecently = false;
+        function onCardClick() {
+            if (swipedRecently) { swipedRecently = false; return; }
+            flipCard();
+        }
+        (function setupSwipe() {
+            const el = document.getElementById("fc-card");
+            el.addEventListener("touchstart", e => {
+                const t = e.changedTouches[0];
+                touchStart = { x: t.clientX, y: t.clientY };
+            }, { passive: true });
+            el.addEventListener("touchend", e => {
+                if (!touchStart) return;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - touchStart.x;
+                const dy = t.clientY - touchStart.y;
+                touchStart = null;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                    swipedRecently = true;
+                    setTimeout(() => { swipedRecently = false; }, 400);
+                    if (dx < 0) nextCard(); else prevCard();
+                }
+            }, { passive: true });
+        })();
         function nextCard() { if (cardIndex < cards.length - 1) showCard(cardIndex + 1); }
         function prevCard() { if (cardIndex > 0) showCard(cardIndex - 1); }
 
@@ -380,9 +415,9 @@
             const rows = matrix.map(row =>
                 `<tr>${row.map(v => `<td class="border border-slate-600 px-3 py-1 text-center">${escapeHtml(v)}</td>`).join("")}</tr>`
             ).join("");
-            return `<div class="inline-block mr-6 mb-3 align-top">
+            return `<div class="inline-block max-w-full mr-6 mb-3 align-top">
                 <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">${escapeHtml(label)}</div>
-                <table class="font-mono text-sm text-slate-200 border-collapse">${rows}</table>
+                <div class="overflow-x-auto"><table class="font-mono text-sm text-slate-200 border-collapse">${rows}</table></div>
             </div>`;
         }
 
@@ -415,7 +450,7 @@
             grid.innerHTML = "";
             questions.forEach((q, idx) => {
                 const btn = document.createElement("button");
-                btn.className = `w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center transition border ${
+                btn.className = `w-10 h-10 sm:w-8 sm:h-8 rounded-lg text-xs font-semibold flex items-center justify-center transition border ${
                     idx === currentIndex 
                         ? 'border-indigo-500 bg-indigo-600 text-white' 
                         : answeredState[idx] 
@@ -477,7 +512,7 @@
                 row.innerHTML = `
                     <span class="text-sm text-slate-200 md:flex-1"><strong>${i + 1}.</strong> ${escapeHtml(prompt)}</span>
                     <select data-match-index="${i}" onchange="selectMatch(${i}, this.value)"
-                        class="md:w-72 bg-slate-900 border border-slate-700 text-sm rounded-md px-2 py-2 text-slate-100 focus:outline-none focus:border-indigo-500">${opts}</select>
+                        class="w-full md:w-72 bg-slate-900 border border-slate-700 text-base md:text-sm rounded-md px-2 py-2 text-slate-100 focus:outline-none focus:border-indigo-500">${opts}</select>
                     <span data-match-mark="${i}" class="text-xs md:w-56"></span>
                 `;
                 container.appendChild(row);
@@ -575,6 +610,10 @@
 
             renderNavGrid();
             typesetMath();
+
+            // On small screens "Next" sits below the fold; bring the new question's top back into view
+            const card = document.getElementById("quiz-card");
+            if (card.getBoundingClientRect().top < 0) card.scrollIntoView({ behavior: "smooth", block: "start" });
         }
 
         function selectMCOption(letter, checked) {
